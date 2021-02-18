@@ -1,6 +1,7 @@
 package com.example.core.download;
 
 import com.example.core.context.Config;
+import com.example.core.context.WorkManager;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.context.Work;
@@ -46,6 +47,8 @@ public class DownloadWork extends Work {
                     downloader = new SeleniumDownloader();
                 break;
         }
+
+        downloader.downloadTimeout = config.downloadTimeout;
 
         Response response = downloader.down(request);
         if (response == null || StringUtils.isEmpty(response.body)) {

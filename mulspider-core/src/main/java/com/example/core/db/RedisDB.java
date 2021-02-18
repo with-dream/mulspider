@@ -5,6 +5,7 @@ import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Task;
 import com.example.core.models.Result;
+import com.example.core.utils.Constant;
 import com.example.core.utils.MD5Utils;
 import com.example.core.utils.SerializeUtils;
 import com.google.common.hash.BloomFilter;
@@ -128,12 +129,12 @@ public class RedisDB extends DBManager {
 
     @Override
     public boolean duplicate(String url, boolean save) {
-        if (config.duplicate == DBConfig.DUPLICATE_BF) {
+        if (config.duplicate == Constant.DUPLICATE_BF) {
             if (bloomFilter.mightContain(url))
                 return true;
             if (save)
                 bloomFilter.put(url);
-        } else if (config.duplicate == DBConfig.DUPLICATE_MD5) {
+        } else if (config.duplicate == Constant.DUPLICATE_MD5) {
             Jedis jedis = getJedis();
 
             byte[] md5 = MD5Utils.str2MD5(url).getBytes();

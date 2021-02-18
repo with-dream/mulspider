@@ -9,8 +9,7 @@ import java.lang.reflect.Method;
 public class ReflectUtils {
 
     public static <T> T invoke(Object obj, Method md, Object[] param, boolean accessible) {
-        if (accessible)
-            md.setAccessible(true);
+        md.setAccessible(true);
         try {
             return (T) md.invoke(obj, param);
         } catch (IllegalAccessException | InvocationTargetException e) {

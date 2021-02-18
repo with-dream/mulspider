@@ -4,6 +4,7 @@ import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
 import com.example.core.models.Task;
+import com.example.core.utils.Constant;
 import com.example.core.utils.MD5Utils;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
@@ -38,9 +39,9 @@ public class MemoryDB extends DBManager {
             resultQueue = new LinkedBlockingQueue<>();
         }
 
-        if (config.duplicate == DBConfig.DUPLICATE_BF)
+        if (config.duplicate == Constant.DUPLICATE_BF)
             bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), 100_0000, 0.000_0001);
-        else if (config.duplicate == DBConfig.DUPLICATE_MD5)
+        else if (config.duplicate == Constant.DUPLICATE_MD5)
             duplicateSet = new HashSet<>();
         return true;
     }
@@ -103,12 +104,12 @@ public class MemoryDB extends DBManager {
 
     @Override
     public boolean duplicate(String url, boolean save) {
-        if (config.duplicate == DBConfig.DUPLICATE_BF) {
+        if (config.duplicate == Constant.DUPLICATE_BF) {
             if (bloomFilter.mightContain(url))
                 return true;
             if (save)
                 bloomFilter.put(url);
-        } else if (config.duplicate == DBConfig.DUPLICATE_MD5) {
+        } else if (config.duplicate == Constant.DUPLICATE_MD5) {
             if (duplicateSet.contains(MD5Utils.str2MD5(url)))
                 return true;
             if (save)

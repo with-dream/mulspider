@@ -54,6 +54,7 @@ public class Request extends Task {
     //失败重试
     public int retryCount = 5;
     public int timeOut = 30 * 1000;
+    public int retryIndex;
 
     public Request(String name) {
         this.name = name;

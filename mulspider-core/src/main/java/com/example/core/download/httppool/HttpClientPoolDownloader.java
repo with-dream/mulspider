@@ -31,7 +31,9 @@ public class HttpClientPoolDownloader extends DownloadHandle {
             httpResponse = client.execute(HttpClientPool.getInstance().httpUriRequest(request), HttpClientPool.getInstance().getHttpClientContext(request));
             return handleResponse(request, httpResponse);
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            if (downloadTimeout != null)
+                downloadTimeout.timeOut(request, e);
         } finally {
             if (httpResponse != null) {
                 //ensure the connection is released back to pool

@@ -1,13 +1,13 @@
 package com.example.core.context;
 
-import com.example.core.db.DBConfig;
-import com.example.core.db.DBManager;
-import com.example.core.db.RedisDB;
+import com.example.core.db.*;
+import com.example.core.download.DownloadHandle;
 import com.example.core.download.ua.UserAgentUtil;
 import com.example.core.models.*;
 import com.example.core.utils.Constant;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,17 +25,7 @@ public class SpiderApp {
     }
 
     public void initInternal() {
-        Config config = new Config();
-
-        config.dbConfig = new DBConfig();
-        config.dbConfig.appName = name;
-        config.dbConfig.redis = new RedisConfig();
-        config.dbConfig.redis.ip = "127.0.0.1";
-        config.dbConfig.redis.port = 6379;
-        this.config = config(config);
-
-        dbManager = new RedisDB();
-        dbManager.init(this.config.dbConfig);
+        initDB();
 
         workManager = new WorkManager(dbManager, config);
         workManager.init(config.downThreadCount, config.extractThreadCount, config.resultThreadCount);
@@ -104,5 +94,41 @@ public class SpiderApp {
         }
 
         return count;
+    }
+
+    private void initDB() {
+        Config config = new Config();
+
+        config.dbConfig = new DBConfig();
+        config.downloadTimeout = (request, e) -> {
+            if (request.retryIndex < request.retryCount) {
+                request.timeOut *= 1.5;
+                addTask(request, true);
+            } else
+                requestTimeout(request, e);
+        };
+        config.dbConfig.dbType = Constant.DB_ROCK;
+        config.dbConfig.appName = name;
+        config.dbConfig.redis = new RedisConfig();
+        config.dbConfig.redis.ip = "127.0.0.1";
+        config.dbConfig.redis.port = 6379;
+        this.config = config(config);
+
+        switch (this.config.dbConfig.dbType) {
+            case Constant.DB_MEMORY:
+                dbManager = new MemoryDB();
+                break;
+            case Constant.DB_ROCK:
+                dbManager = new RocksQueueDB();
+                break;
+            case Constant.DB_REDIS:
+                dbManager = new RedisDB();
+                break;
+        }
+
+        dbManager.init(this.config.dbConfig);
+    }
+
+    protected void requestTimeout(Request request, IOException e) {
     }
 }

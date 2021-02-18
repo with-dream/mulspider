@@ -39,7 +39,7 @@ public class ExtractUtils {
 
                         obj = new ArrayList<>();
                         for (Object item : tagNode.evaluateXPath(xpath))
-                            obj.add((String) item);
+                            obj.add(item.toString());
                     } else if (StringUtils.isNotEmpty(jsoup)) {
                         if (document == null)
                             throw new RuntimeException("annotation SField jsoup param  document must not null");

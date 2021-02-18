@@ -6,10 +6,7 @@ import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
 import com.example.core.models.Task;
-import com.example.core.utils.D;
-import com.example.core.utils.MD5Utils;
-import com.example.core.utils.SerializeUtils;
-import com.example.core.utils.UUIDUtils;
+import com.example.core.utils.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -40,20 +37,22 @@ public class RocksQueueDB extends DBManager {
 
     @Override
     public boolean init(DBConfig config) {
+        super.init(config);
         StoreOptions storeOptions = StoreOptions.builder()
+                .directory("./file/rockdb")
                 .database(prefix + config.appName)
                 .build();
         rocksStore = new RocksStore(storeOptions);
 
-        int count = config.enablePriority ? 3 : 1;
+        int count = 3;
         requestQ = new RocksQueue[count];
         responseQ = new RocksQueue[count];
         resultQ = new RocksQueue[count];
 
-        if (config.duplicate == DBConfig.DUPLICATE_BF)
+        if (config.duplicate == Constant.DUPLICATE_BF)
             D.e("rocksDB do not support bloomfilter, use md5");
-        if (config.duplicate == DBConfig.DUPLICATE_MD5
-                || config.duplicate == DBConfig.DUPLICATE_BF)
+        if (config.duplicate == Constant.DUPLICATE_MD5
+                || config.duplicate == Constant.DUPLICATE_BF)
             duplicateSet = rocksStore.createSet("duplicate");
         cacheSet = rocksStore.createSet("cacheSet");
 
@@ -132,8 +131,8 @@ public class RocksQueueDB extends DBManager {
 
     @Override
     public boolean duplicate(String url, boolean save) {
-        if (config.duplicate == DBConfig.DUPLICATE_MD5
-                || config.duplicate == DBConfig.DUPLICATE_BF) {
+        if (config.duplicate == Constant.DUPLICATE_MD5
+                || config.duplicate == Constant.DUPLICATE_BF) {
             byte[] key = MD5Utils.str2MD5(url).getBytes();
             if (duplicateSet.exist(key))
                 return true;

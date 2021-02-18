@@ -256,6 +256,9 @@ public class RocksStore {
             iterator.next();
         }
 
+        if (map.isEmpty())
+            return map;
+
         try {
             db.deleteRange(cfHandle, firstKey, lastKey);
         } catch (RocksDBException e) {

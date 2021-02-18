@@ -61,8 +61,10 @@ public class RocksQueue {
     }
 
     public long enqueue(byte[] value) throws RocksQueueException {
-        if (isFull())
+        if (isFull()) {
             throw new RuntimeException("this queue is full:" + queueName);
+        }
+
         long index;
         if (tail.get() + 1 >= MAX_SIZE) {
             synchronized (TAIL_LOCK) {
@@ -74,6 +76,8 @@ public class RocksQueue {
             }
         } else
             index = tail.incrementAndGet();
+
+//        D.d(String.format("enqueue==> name:%s head:%d  tail:%d  index:%d", queueName, head.get(), tail.get(), index));
 
         try (final WriteBatch writeBatch = new WriteBatch()) {
             final byte[] indexId = Bytes.longToByte(index);
@@ -111,7 +115,7 @@ public class RocksQueue {
             }
         else
             index = head.incrementAndGet();
-
+//        D.d(String.format("dequeue==> name:%s head:%d  tail:%d  index:%d", queueName, head.get(), tail.get(), index));
         QueueItem item = consume(index);
         try {
             removeHead();
@@ -178,7 +182,7 @@ public class RocksQueue {
     }
 
     public boolean isFull() {
-        return head.get() == (tail.get() + 1) % MAX_SIZE;
+        return head.get() == (tail.get() + 1) - MAX_SIZE || head.get() == (tail.get() + 1);
     }
 
     public long getSize() {

@@ -55,7 +55,6 @@ public class DatabaseUtils {
         Connection conn = null;
         //驱动程序名
         String driver = "com.mysql.cj.jdbc.Driver";
-//        String driver = "com.mysql.jdbc.Driver";
         //URL指向要访问的数据库名mydata
         String url = "jdbc:mysql://localhost:3306/" + database + "?useUnicode=true&serverTimezone=UTC&useSSL=false";
         //MySQL配置时的用户名

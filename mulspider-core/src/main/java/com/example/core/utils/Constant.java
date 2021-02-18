@@ -10,6 +10,14 @@ public class Constant {
     public static final String EXTRACT = "extract";
     public static final String RESULT = "result";
 
+    public static final int DB_ROCK = 0;
+    public static final int DB_MEMORY = 1;
+    public static final int DB_REDIS = 2;
+
+    public static final int DUPLICATE_NONE = -1;
+    public static final int DUPLICATE_MD5 = 0;
+    public static final int DUPLICATE_BF = 1;
+
     public static final int MIN_DOWN_DELAY_TIME = 800;
     public static final int EMPTY_DELAY_TIME = 2000;
 
