@@ -87,9 +87,13 @@ public class SpiderApp {
      * return not duplicate count
      */
     public int dupList(List<String> items) {
+        return dupList("", items);
+    }
+
+    public int dupList(String prefix, List<String> items) {
         int count = 0;
         for (Object str : items) {
-            if (!duplicate(str.toString(), false))
+            if (!duplicate(prefix + str.toString(), false))
                 count++;
         }
 

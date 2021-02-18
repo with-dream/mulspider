@@ -46,7 +46,7 @@ public class Request extends Task {
     public String proxyPassword;
 
     public DownloadWork.DownType downType = DownloadWork.DownType.CLIENT_POOL;
-    public int delayTime = 500;
+    public int delayTime = 1000;
     public SeleniumDownloader.DriverType driver;
 
     public boolean force;   //是否去重
