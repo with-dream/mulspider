@@ -9,9 +9,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
 
 public class Request extends Task {
+    private static final long serialVersionUID = 673293417482457124L;
+
     public final static String POST = "POST";
     public final static String GET = "GET";
 
@@ -64,6 +67,15 @@ public class Request extends Task {
         return StringUtils.isEmpty(site) ? site = StrUtils.getBaseUrl(url) : site;
     }
 
+    public void headless() {
+        downType = DownloadWork.DownType.CLIENT_WEBDRIVER;
+        driver = SeleniumDownloader.DriverType.CHROME_HEADLESS;
+    }
+
+    public void httpPool() {
+        downType = DownloadWork.DownType.CLIENT_POOL;
+    }
+
     public void reset() {
         url = null;
         site = null;
@@ -73,5 +85,31 @@ public class Request extends Task {
         Request request = SerializationUtils.clone(this);
         request.reset();
         return request;
+    }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", method=" + (method == null ? "" : Arrays.toString(method)) +
+                ", reqType='" + reqType + '\'' +
+                ", headers=" + headers +
+                ", params=" + params +
+                ", paramType=" + paramType +
+                ", cookie=" + cookie +
+                ", userAgent='" + userAgent + '\'' +
+                ", proxyUrl='" + proxyUrl + '\'' +
+                ", proxyPort=" + proxyPort +
+                ", proxyUserName='" + proxyUserName + '\'' +
+                ", proxyPassword='" + proxyPassword + '\'' +
+                ", downType=" + downType +
+                ", delayTime=" + delayTime +
+                ", driver=" + driver +
+                ", force=" + force +
+                ", retryCount=" + retryCount +
+                ", timeOut=" + timeOut +
+                ", retryIndex=" + retryIndex +
+                '}';
     }
 }

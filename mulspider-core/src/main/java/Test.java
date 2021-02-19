@@ -1,34 +1,15 @@
-import com.example.core.annotation.ExtractMethod;
-import com.example.core.db.rocksdb.QueueItem;
-import com.example.core.db.rocksdb.RocksQueue;
-import com.example.core.db.rocksdb.RocksStore;
-import com.example.core.db.rocksdb.StoreOptions;
-import com.example.core.db.rocksdb.exception.RocksQueueException;
-import com.example.core.db.rocksdb.util.Bytes;
-import com.example.core.utils.D;
-import org.apache.commons.lang3.SerializationUtils;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Test {
-    String str = null;
-
+    private final static Logger logger = LoggerFactory.getLogger(Test.class);
     public static void main(String[] args) {
-        Integer it = 1;
-        byte[] b = SerializationUtils.serialize(it);
-        D.d("==>" + SerializationUtils.deserialize(b));
-    }
-
-
-    private void tt() {
-        str = new String("reflectInit==>{WallHaven=MethodReflect{name='WallHaven', enable=false, share=false, clazz=class");
-        ttt(str);
-    }
-
-    private void ttt(String ss) {
-        D.d(ss == str);
+        Reflections reflections = new Reflections();
+        logger.trace("trace level %s {}", "111", "222");
+        logger.debug("debug level");
+        logger.info("info level");
+        logger.warn("warn level");
+        logger.error("error level");
     }
 }

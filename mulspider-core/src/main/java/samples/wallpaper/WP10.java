@@ -3,31 +3,26 @@ package samples.wallpaper;
 import com.example.core.annotation.ExtractMethod;
 import com.example.core.annotation.Spider;
 import com.example.core.context.Config;
-import com.example.core.context.SpiderApp;
-import com.example.core.download.DownloadWork;
 import com.example.core.extract.ExtractUtils;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
-import com.example.core.utils.D;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-@Spider(name = WP10.NAME)
-public class WP10 extends SpiderApp {
+@Spider(name = WP10.NAME, enable = true)
+public class WP10 extends WPTemp {
     public static final String NAME = "WP10";
-    private static final String EXTRACT_INFO = "WP10.extractInfo";
 
-    private static final String baseUrl = "https://10wallpaper.com/List_wallpapers/page/";
-    private AtomicInteger index = new AtomicInteger(1);
-    private String[] infoMethods = new String[]{EXTRACT_INFO, WallPaperResult.WallPaperResult};
-    private String[] listMethods = new String[]{"WP10.extractItem"};
-    AtomicInteger count = new AtomicInteger(0);
+    public WP10() {
+        logger = LoggerFactory.getLogger(this.getClass());
+        baseUrl = "https://10wallpaper.com/List_wallpapers/page/";
+        infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
+        listMethods = new String[]{NAME + EXTRACT_ITEM};
+    }
 
     @Override
     protected Config config(Config config) {
@@ -36,39 +31,18 @@ public class WP10 extends SpiderApp {
         return config;
     }
 
-    @Override
-    public void init() {
-        Integer pindex = dbManager.get("pageIndex");
-        if (pindex != null && pindex > 0)
-            index.set(pindex);
-        D.d("init pindex==>" + pindex);
-        Request request = new Request(name);
-        request.method = listMethods;
-        request.url = baseUrl + index.get();
-        addTask(request, true);
-    }
-
-    @ExtractMethod(methods = {"WP10.extractItem"})
+    @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
         List<String> urls = response.eval("//*[@id=\"pics-list\"]/p/a/@href");
-        if (urls == null || urls.isEmpty()) {
-            D.e("err==>" + response.request.url);
-            return Result.makeIgnore();
-        }
-        if (dupList(response.request.getSite(), urls) != 0) {
-            Request request = response.request.clone();
-            int indexTmp = index.incrementAndGet();
-            if (indexTmp != 10) {
-                request.url = baseUrl + indexTmp;
-                request.method = listMethods;
-                dbManager.put("pageIndex", index.get());
-                addTask(request);
-            }
-        }
+
+        Result resTmp;
+        if ((resTmp = duplicate(response, urls, true)) != null)
+            return resTmp;
 
         List<String> tags = response.eval("//*[@id=\"pics-list\"]/p/a/img/@alt");
         if (urls.size() != tags.size())
             throw new RuntimeException("获取数量错误 ==>" + response.request.url);
+        List<String> thumbnails = response.eval("//*[@id=\"pics-list\"]/p/a/img/@src");
 
         int urlIndex = 0;
         for (String url : urls) {
@@ -76,16 +50,19 @@ public class WP10 extends SpiderApp {
             request.url = response.request.getSite() + url;
             request.method = infoMethods;
 
-            String tag = tags.get(urlIndex++);
+            String tag = tags.get(urlIndex);
             if (StringUtils.isNotEmpty(tag))
                 request.meta.put("tags", tag);
+            if (!thumbnails.get(urlIndex).isEmpty())
+                request.meta.put("thumbnail", response.request.getSite() + thumbnails.get(urlIndex));
             addTask(request);
-            D.d("request==>" + count.incrementAndGet());
+            logger.debug("request==>" + count.incrementAndGet());
+            urlIndex++;
         }
         return Result.makeIgnore();
     }
 
-    @ExtractMethod(methods = {EXTRACT_INFO})
+    @ExtractMethod(methods = {NAME + EXTRACT_INFO})
     private Result extractInfo(Response response) {
         Result result = Result.make(response.request);
         WP10Model model = ExtractUtils.extract(response, WP10Model.class);
@@ -116,14 +93,16 @@ public class WP10 extends SpiderApp {
             }
         }
         model.imgUrl = response.request.getSite() + model.imgUrl;
+        String[] wh = model.imgW.split("x");
+        model.imgW = wh[0];
+        model.imgH = wh[1];
+        model.thumbnail = (String) response.request.meta.get("thumbnail");
+        model.thumbnailW = "400";
+        model.thumbnailH = "225";
+        response.request.meta.remove("thumbnail");
 
         result.result.put("result", model);
+        logger.debug("result==>" + count.decrementAndGet());
         return result;
-    }
-
-    @Override
-    protected void requestTimeout(Request request, IOException e) {
-        super.requestTimeout(request, e);
-        D.e("requestTimeout==>" + e.getMessage());
     }
 }

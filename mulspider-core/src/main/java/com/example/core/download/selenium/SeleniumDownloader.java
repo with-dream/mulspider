@@ -1,10 +1,10 @@
 package com.example.core.download.selenium;
 
+import com.example.core.context.Work;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.download.DownloadHandle;
 import com.example.core.utils.CharsetUtils;
-import com.example.core.utils.D;
 import com.example.core.utils.ThreadUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -15,6 +15,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -26,6 +28,8 @@ public class SeleniumDownloader extends DownloadHandle {
     public enum DriverType {
         CHROME, FIREFOX, SAFARI, CHROME_HEADLESS, PHANTOMJS
     }
+
+    protected final static Logger logger = LoggerFactory.getLogger(SeleniumDownloader.class);
 
     private WebDriver createDriver(Request request) {
         WebDriver webDriver = null;
@@ -94,7 +98,7 @@ public class SeleniumDownloader extends DownloadHandle {
 
             webDriver.get(request.url);
         } catch (Exception e) {
-            D.e("Driver dowork==>" + e.getMessage());
+            logger.error("Driver dowork==>" + request.url + "  err:" + e.getMessage());
         } finally {
             ThreadUtils.sleep(300);
             WebElement webElement = webDriver.findElement(By.xpath("/html"));

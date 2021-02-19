@@ -1,7 +1,6 @@
 package com.example.core.download.httppool;
 
 import com.example.core.models.Request;
-import com.example.core.utils.D;
 import com.example.core.utils.StrUtils;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
@@ -138,10 +137,8 @@ public class HttpClientPool {
             return new SSLConnectionSocketFactory(sslContext, supportedProtocols,
                     null,
                     new DefaultHostnameVerifier()); // 优先绕过安全证书
-        } catch (KeyManagementException e) {
-            D.e("ssl connection fail", e);
-        } catch (NoSuchAlgorithmException e) {
-            D.e("ssl connection fail", e);
+        } catch (KeyManagementException | NoSuchAlgorithmException e) {
+            System.err.println("ssl connection fail" + e);
         }
         return SSLConnectionSocketFactory.getSocketFactory();
     }

@@ -4,7 +4,6 @@ import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.download.DownloadHandle;
 import com.example.core.utils.CharsetUtils;
-import com.example.core.utils.D;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

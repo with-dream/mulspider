@@ -18,18 +18,24 @@ public class WP10Model implements Serializable {
     public String size;
     public String fav;
     public String views;
+    public String thumbnail;
+    public String thumbnailW;
+    public String thumbnailH;
 
     @Override
     public String toString() {
-        return "WHModel{" +
+        return "WP10Model{" +
                 "imgWrapUrl='" + imgWrapUrl + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
-                ", tags='" + tags + '\'' +
+                ", tags=" + tags +
                 ", imgW='" + imgW + '\'' +
                 ", imgH='" + imgH + '\'' +
                 ", size='" + size + '\'' +
                 ", fav='" + fav + '\'' +
                 ", views='" + views + '\'' +
+                ", thumbnail='" + thumbnail + '\'' +
+                ", thumbnailW='" + thumbnailW + '\'' +
+                ", thumbnailH='" + thumbnailH + '\'' +
                 '}';
     }
 }

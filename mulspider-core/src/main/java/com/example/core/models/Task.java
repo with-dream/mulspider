@@ -15,6 +15,8 @@ public class Task implements Serializable, Comparable<Task> {
 
     public boolean ignore;
 
+    public boolean exitThread;
+
     @Override
     public String toString() {
         return "Task{" +

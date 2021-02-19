@@ -50,7 +50,7 @@ public class RocksQueueDB extends DBManager {
         resultQ = new RocksQueue[count];
 
         if (config.duplicate == Constant.DUPLICATE_BF)
-            D.e("rocksDB do not support bloomfilter, use md5");
+            System.err.println("rocksDB do not support bloomfilter, use md5");
         if (config.duplicate == Constant.DUPLICATE_MD5
                 || config.duplicate == Constant.DUPLICATE_BF)
             duplicateSet = rocksStore.createSet("duplicate");

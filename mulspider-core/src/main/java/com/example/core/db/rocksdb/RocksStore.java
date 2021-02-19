@@ -4,7 +4,6 @@ import com.example.core.db.rocksdb.jmx.RocksStoreMetric;
 import com.example.core.db.rocksdb.util.Bytes;
 import com.example.core.db.rocksdb.util.Files;
 import com.example.core.db.rocksdb.util.Strings;
-import com.example.core.utils.D;
 import org.rocksdb.*;
 
 import java.io.File;
@@ -103,11 +102,11 @@ public class RocksStore {
         //load existing column families
         try {
             List<byte[]> columnFamilies = RocksDB.listColumnFamilies(new Options(), this.fullPath);
-            D.d("Load existing column families " + columnFamilies.stream().map(cf -> Bytes.bytesToString(cf)).collect(toList()));
+//            System.out.println("Load existing column families " + columnFamilies.stream().map(cf -> Bytes.bytesToString(cf)).collect(toList()));
 
             columnFamilies.forEach(cf -> cfDescriptors.add(new ColumnFamilyDescriptor(cf, cfOpts)));
         } catch (RocksDBException e) {
-            D.d("Load existing column families failed." + e.getMessage());
+            System.err.println("Load existing column families failed." + e.getMessage());
         }
 
         if (cfDescriptors.isEmpty()) {
@@ -116,15 +115,15 @@ public class RocksStore {
 
         try {
             rocksDB = RocksDB.open(dbOptions, fullPath, cfDescriptors, columnFamilyHandleList);
-            D.d("rocksDB path " + new File(fullPath).getAbsolutePath());
+            System.out.println("rocksDB path " + new File(fullPath).getAbsolutePath());
         } catch (RocksDBException e) {
-            D.e("Failed to open rocks database, try to remove rocks db database " + fullPath + e.getMessage());
+            System.err.println("Failed to open rocks database, try to remove rocks db database " + fullPath + e.getMessage());
             Files.deleteDirectory(fullPath);
             try {
                 rocksDB = RocksDB.open(dbOptions, fullPath, cfDescriptors, columnFamilyHandleList);
-                D.d("Recreate rocks db at {} again from scratch" + fullPath);
+                System.err.println("Recreate rocks db at {} again from scratch" + fullPath);
             } catch (RocksDBException e1) {
-                D.e("Failed to create rocks db again at {}" + fullPath + e.getMessage());
+                System.err.println("Failed to create rocks db again at {}" + fullPath + e.getMessage());
                 throw new RuntimeException("Failed to create rocks db again.");
             }
         }
@@ -219,7 +218,7 @@ public class RocksStore {
         try {
             handle = db.createColumnFamily(cfDescriptor);
         } catch (RocksDBException e) {
-            D.e("Create column family fail" + e.getMessage());
+            System.err.println("Create column family fail" + e.getMessage());
         }
 
         columnFamilyHandleMap.put(cfName, handle);
@@ -232,7 +231,7 @@ public class RocksStore {
         try {
             value = db.get(cfHandle, key);
         } catch (RocksDBException e) {
-            D.e("Failed to get {} from rocks db, {}" + key + e.getMessage());
+            System.err.println("Failed to get {} from rocks db, {}" + key + e.getMessage());
         }
         return value;
     }
@@ -241,7 +240,7 @@ public class RocksStore {
         try {
             db.delete(cfHandle, key);
         } catch (RocksDBException e) {
-            D.e("Failed to delete {} from rocks db, {}" + key + e.getMessage());
+            System.err.println("Failed to delete {} from rocks db, {}" + key + e.getMessage());
         }
     }
 

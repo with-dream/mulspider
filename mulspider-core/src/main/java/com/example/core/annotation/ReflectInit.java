@@ -11,6 +11,9 @@ import com.example.core.utils.StrUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -74,6 +77,7 @@ public class ReflectInit {
 
     private void initAnnMeta(Map<String, AnnMeta.AppMeta> appMap, Map<String, AnnMeta.WorkMeta> workMap) {
         try {
+            Reflections.log = null;
             Reflections ref = new Reflections();
             Set<Class<?>> spiderCls = ref.getTypesAnnotatedWith(Spider.class);
             Set<Class<?>> spiderWorkCls = ref.getTypesAnnotatedWith(SpiderWork.class);
@@ -127,7 +131,7 @@ public class ReflectInit {
             }
 
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 

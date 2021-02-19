@@ -6,7 +6,6 @@ import com.example.core.annotation.WorkInit;
 import com.example.core.annotation.WorkRelease;
 import com.example.core.models.Result;
 import com.example.core.utils.Constant;
-import com.example.core.utils.D;
 import com.google.gson.Gson;
 
 import java.io.*;
@@ -24,12 +23,12 @@ public class DefaultFile {
 
     @WorkInit
     public void init() {
-        D.d("DefaultFile==>init");
+
     }
 
     @WorkRelease
     public void release() {
-        D.d("DefaultFile==>release");
+
     }
 
     @ResultMethod(methods = {"default_savefile"}, lock = true)
@@ -40,7 +39,7 @@ public class DefaultFile {
             if (!dir.exists())
                 dir.mkdirs();
             String path = dir.getAbsolutePath() + File.separator + name;
-            D.e("path==>" + path);
+            System.out.println("path==>" + path);
 
             BufferedWriter out = null;
             try {

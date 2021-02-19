@@ -6,12 +6,17 @@ import com.example.core.download.ua.UserAgentUtil;
 import com.example.core.models.*;
 import com.example.core.utils.Constant;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import samples.wallpaper.WallHaven;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 public class SpiderApp {
+    private final static Logger appLogger = LoggerFactory.getLogger(SpiderApp.class);
+
     protected String name;
     private WorkManager workManager;
     protected DBManager dbManager;
@@ -104,6 +109,12 @@ public class SpiderApp {
         Config config = new Config();
 
         config.dbConfig = new DBConfig();
+        config.dbConfig.dbType = Constant.DB_ROCK;
+        config.dbConfig.appName = name;
+        config.dbConfig.redis = new RedisConfig();
+        config.dbConfig.redis.ip = "127.0.0.1";
+        config.dbConfig.redis.port = 6379;
+        this.config = config(config);
         config.downloadTimeout = (request, e) -> {
             if (request.retryIndex < request.retryCount) {
                 request.timeOut *= 1.5;
@@ -111,12 +122,6 @@ public class SpiderApp {
             } else
                 requestTimeout(request, e);
         };
-        config.dbConfig.dbType = Constant.DB_ROCK;
-        config.dbConfig.appName = name;
-        config.dbConfig.redis = new RedisConfig();
-        config.dbConfig.redis.ip = "127.0.0.1";
-        config.dbConfig.redis.port = 6379;
-        this.config = config(config);
 
         switch (this.config.dbConfig.dbType) {
             case Constant.DB_MEMORY:
@@ -134,5 +139,6 @@ public class SpiderApp {
     }
 
     protected void requestTimeout(Request request, IOException e) {
+        appLogger.error("requestTimeout==>" + request + "  err:" + e.getMessage());
     }
 }

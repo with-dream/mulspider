@@ -2,88 +2,77 @@ package samples.wallpaper;
 
 import com.example.core.annotation.ExtractMethod;
 import com.example.core.context.Config;
-import com.example.core.context.SpiderApp;
 import com.example.core.annotation.Spider;
+import com.example.core.download.DownloadWork;
+import com.example.core.download.selenium.SeleniumDownloader;
 import com.example.core.extract.ExtractUtils;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
-import com.example.core.utils.D;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-@Spider(name = WallHaven.NAME, enable = false)
-public class WallHaven extends SpiderApp {
+@Spider(name = WallHaven.NAME, enable = true)
+public class WallHaven extends WPTemp {
     public static final String NAME = "WallHaven";
-    private static final String EXTRACT_INFO = "WallHaven.extractInfo";
 
-    private static final String baseUrl = "https://wallhaven.cc/latest?page=";
-    private AtomicInteger index = new AtomicInteger(1);
-    private String[] infoMethods = new String[]{EXTRACT_INFO, WallPaperResult.WallPaperResult};
-    private String[] listMethods = new String[]{"WallHaven.extractItem"};
-    AtomicInteger count = new AtomicInteger(0);
+    public WallHaven() {
+        logger = LoggerFactory.getLogger(this.getClass());
+        baseUrl = "https://wallhaven.cc/latest?page=";
+        infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
+        listMethods = new String[]{NAME + EXTRACT_ITEM};
+        downType = DownloadWork.DownType.CLIENT_POOL;
+    }
 
     @Override
     protected Config config(Config config) {
-        config.downThreadCount = 2;
+        config.downThreadCount = 1;
         config.breakpoint = true;
         return config;
     }
 
-    @Override
-    public void init() {
-        Integer pindex = dbManager.get("pageIndex");
-        if (pindex != null && pindex > 0)
-            index.set(pindex);
-        D.d("init pindex==>" + pindex);
-        Request request = new Request(name);
-        request.method = listMethods;
-        request.url = baseUrl + index.get();
-        addTask(request, true);
-    }
-
-    @ExtractMethod(methods = {"WallHaven.extractItem"})
+    @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
         List<String> urls = response.eval("//*[@id=\"thumbs\"]/section[1]/ul/li/figure/a/@href");
-        if (urls == null || urls.isEmpty()) {
-            D.e("err==>" + response.request.url);
-            return Result.makeIgnore();
-        }
-        if (dupList(urls) != 0) {
-            Request request = response.request.clone();
-            int indexTmp = index.incrementAndGet();
-            if (indexTmp != 10) {
-                request.url = baseUrl + indexTmp;
-                request.method = listMethods;
-                dbManager.put("pageIndex", index.get());
-                addTask(request);
-            }
-        }
 
+        Result resTmp;
+        if ((resTmp = duplicate(response, urls, false)) != null)
+            return resTmp;
+////*[@id="thumbs"]/section/ul/li[1]/figure/img
+        List<String> thumbnails = response.eval("//*[@id=\"thumbs\"]/section/ul/li/figure/img/@data-src");
+        int thIndex = 0;
         for (String url : urls) {
             Request request = new Request(name);
             request.url = url;
+            if (downType == DownloadWork.DownType.CLIENT_POOL)
+                request.httpPool();
+            else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
+                request.headless();
             request.method = infoMethods;
+            request.meta.put("thumbnail", thumbnails.get(thIndex));
             addTask(request);
-            D.d("request==>" + count.incrementAndGet());
+            logger.debug("request==>" + count.incrementAndGet());
+            thIndex++;
         }
         return Result.makeIgnore();
     }
 
-    @ExtractMethod(methods = {EXTRACT_INFO})
+    @ExtractMethod(methods = {NAME + EXTRACT_INFO})
     private Result extractInfo(Response response) {
         Result result = Result.make(response.request);
         WHModel model = ExtractUtils.extract(response, WHModel.class);
         model.imgWrapUrl = response.request.url;
-        result.result.put("result", model);
-        return result;
-    }
+        String[] wh = model.imgW.split("x");
+        model.imgW = wh[0];
+        model.imgH = wh[1];
 
-    @Override
-    protected void requestTimeout(Request request, IOException e) {
-        super.requestTimeout(request, e);
-        D.e("requestTimeout==>" + e.getMessage());
+        model.thumbnail = (String) response.request.meta.get("thumbnail");
+        model.thumbnailW = "300";
+        model.thumbnailH = "200";
+        result.result.put("result", model);
+        response.request.meta.remove("thumbnail");
+        logger.debug("result==>" + count.decrementAndGet());
+        return result;
     }
 }

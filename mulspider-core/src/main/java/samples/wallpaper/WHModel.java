@@ -22,18 +22,24 @@ public class WHModel implements Serializable {
     public String fav;
     @SField(xpath = "//*[@id=\"showcase-sidebar\"]/div/div[1]/div[2]/dl/dd[6]/a/text()")
     public String views;
+    public String thumbnail;
+    public String thumbnailW;
+    public String thumbnailH;
 
     @Override
     public String toString() {
-        return "WHModel{" +
+        return "WP10Model{" +
                 "imgWrapUrl='" + imgWrapUrl + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
-                ", tags='" + tags + '\'' +
+                ", tags=" + tags +
                 ", imgW='" + imgW + '\'' +
                 ", imgH='" + imgH + '\'' +
                 ", size='" + size + '\'' +
                 ", fav='" + fav + '\'' +
                 ", views='" + views + '\'' +
+                ", thumbnail='" + thumbnail + '\'' +
+                ", thumbnailW='" + thumbnailW + '\'' +
+                ", thumbnailH='" + thumbnailH + '\'' +
                 '}';
     }
 }

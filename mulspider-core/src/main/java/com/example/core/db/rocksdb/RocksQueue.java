@@ -6,7 +6,6 @@ import com.example.core.db.rocksdb.exception.RocksQueueException;
 import com.example.core.db.rocksdb.exception.RocksQueueRemoveHeadException;
 import com.example.core.db.rocksdb.jmx.RocksQueueMetric;
 import com.example.core.db.rocksdb.util.Bytes;
-import com.example.core.utils.D;
 import org.rocksdb.ColumnFamilyHandle;
 import org.rocksdb.RocksDBException;
 import org.rocksdb.WriteBatch;

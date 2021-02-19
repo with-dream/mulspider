@@ -1,7 +1,5 @@
 package com.example.core.db.rocksdb.jmx;
 
-import com.example.core.utils.D;
-
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -16,7 +14,7 @@ public abstract class RocksMetrics {
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
             mBeanServer.registerMBean(this, name);
         } catch (JMException e) {
-            D.e("Error while register the MBean " + name + " -- " + e.getMessage());
+            System.err.println("Error while register the MBean " + name + " -- " + e.getMessage());
         }
     }
 
@@ -26,7 +24,7 @@ public abstract class RocksMetrics {
                 MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
                 mBeanServer.unregisterMBean(name);
             } catch (JMException e) {
-                D.e("Unable to unregister the MBean " + name);
+                System.err.println("Unable to unregister the MBean " + name);
             } finally {
                 this.name = null;
             }

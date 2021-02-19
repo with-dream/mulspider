@@ -1,14 +1,12 @@
 package com.example.core.download;
 
 import com.example.core.context.Config;
-import com.example.core.context.WorkManager;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.context.Work;
 import com.example.core.download.httppool.HttpClientPoolDownloader;
 import com.example.core.download.selenium.SeleniumDownloader;
 import com.example.core.utils.Constant;
-import com.example.core.utils.D;
 import com.example.core.utils.ThreadUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,11 +50,11 @@ public class DownloadWork extends Work {
 
         Response response = downloader.down(request);
         if (response == null || StringUtils.isEmpty(response.body)) {
-            D.d("DownloadWork response==>is empty");
+            logger.error("DownloadWork response is empty==>" + request.url);
             ThreadUtils.sleep(Constant.EMPTY_DELAY_TIME);
             return true;
         }
-        D.d("DownloadWork==>" + response.body.length());
+        logger.debug("DownloadWork==>" + response.body.length());
 
         dbManager.addTask(response);
 

@@ -8,6 +8,8 @@ import com.example.core.models.GlobalConfig;
 import com.example.core.result.ResultWork;
 import com.example.core.utils.*;
 import org.ho.yaml.Yaml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +17,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class Context {
+    private final static Logger logger = LoggerFactory.getLogger(SpiderApp.class);
+
     public Map<String, AnnMeta.AppMeta> appMap = new HashMap<>();
     public Map<String, AnnMeta.WorkMeta> workMap = new HashMap<>();
     public GlobalConfig globalConfig;
@@ -26,7 +30,6 @@ public class Context {
     private ReflectInit reflectInit = new ReflectInit();
 
     private Context() {
-
     }
 
     private static class ContextHolder {
@@ -42,7 +45,7 @@ public class Context {
         reflectInit.initAnnotation(appMap, workMap, methodList, methodShare);
         initThreadPool();
 
-        D.d("reflectInit==>" + methodList);
+        logger.info("reflectInit==>" + methodList);
     }
 
     public void release() {
@@ -54,7 +57,7 @@ public class Context {
         File dumpFile = new File(path);
         try {
             globalConfig = Yaml.loadType(dumpFile, GlobalConfig.class);
-            D.d("config==>" + globalConfig);
+            logger.info("config==>" + globalConfig);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -65,15 +68,15 @@ public class Context {
         threadFactory = new ExceptionThreadFactory(handler);
         downExecutor = new ThreadPoolExecutor(2, Integer.MAX_VALUE, 60
                 , TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory, (r, executor) -> {
-            D.e("downExecutor work overflow");
+            logger.warn("downExecutor work overflow");
         });
         extractExecutor = new ThreadPoolExecutor(2, Integer.MAX_VALUE, 60
                 , TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory, (r, executor) -> {
-            D.e("extractExecutor work overflow");
+            logger.warn("extractExecutor work overflow");
         });
         resultExecutor = new ThreadPoolExecutor(2, Integer.MAX_VALUE, 60
                 , TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory, (r, executor) -> {
-            D.e("resultExecutor work overflow");
+            logger.warn("resultExecutor work overflow");
         });
     }
 
