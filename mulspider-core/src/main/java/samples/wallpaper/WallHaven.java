@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Spider(name = WallHaven.NAME, enable = true)
+@Spider(name = WallHaven.NAME, enable = false)
 public class WallHaven extends WPTemp {
     public static final String NAME = "WallHaven";
 
@@ -39,7 +39,7 @@ public class WallHaven extends WPTemp {
         Result resTmp;
         if ((resTmp = duplicate(response, urls, false)) != null)
             return resTmp;
-////*[@id="thumbs"]/section/ul/li[1]/figure/img
+
         List<String> thumbnails = response.eval("//*[@id=\"thumbs\"]/section/ul/li/figure/img/@data-src");
         int thIndex = 0;
         for (String url : urls) {

@@ -42,6 +42,10 @@ public class WPTemp extends SpiderApp {
     }
 
     protected Result duplicate(Response response, List<String> urls, boolean site) {
+        return duplicate(response, urls, site, false);
+    }
+
+    protected Result duplicate(Response response, List<String> urls, boolean site, boolean separator) {
         if (urls == null || urls.isEmpty()) {
             logger.warn("==>extractItem urls is empty  emptyCount:" + emptyCount + " url:" + response.request.url);
             if (emptyCount++ == 5) {
@@ -52,7 +56,7 @@ public class WPTemp extends SpiderApp {
         }
         emptyCount = 0;
 
-        if (dupList(site ? response.request.getSite() : "", urls) != 0) {
+        if (dupList(site ? response.request.getSite() : "", urls, separator) != 0) {
             dupCount = 0;
             if (index.get() != 10)
                 addRequest(response);
