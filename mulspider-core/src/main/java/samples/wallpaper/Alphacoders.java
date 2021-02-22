@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = Alphacoders.NAME, enable = true)
+@Spider(name = Alphacoders.NAME, enable = false)
 public class Alphacoders extends WPTemp {
     public static final String NAME = "Alphacoders";
 
@@ -49,7 +49,7 @@ public class Alphacoders extends WPTemp {
             request.method = infoMethods;
 
             if (!thumbnails.get(urlIndex).isEmpty())
-                request.meta.put("thumbnail", response.request.getSite() + thumbnails.get(urlIndex));
+                request.meta.put(THUM, response.request.getSite() + thumbnails.get(urlIndex));
             addTask(request);
             logger.debug("request==>" + count.incrementAndGet());
             urlIndex++;
@@ -62,10 +62,10 @@ public class Alphacoders extends WPTemp {
         Result result = Result.make(response.request);
         AlphacoderModel model = ExtractUtils.extract(response, AlphacoderModel.class);
         model.imgWrapUrl = response.request.url;
-        model.thumbnail = (String) response.request.meta.get("thumbnail");
+        model.thumbnail = (String) response.request.meta.get(THUM);
         model.thumbnailW = "600";
         model.thumbnailH = "375";
-        response.request.meta.remove("thumbnail");
+        response.request.meta.remove(THUM);
 
         if (StringUtils.isNotEmpty(model.fav))
             model.fav = model.fav.trim();

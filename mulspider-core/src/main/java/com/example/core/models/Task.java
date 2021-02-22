@@ -17,6 +17,18 @@ public class Task implements Serializable, Comparable<Task> {
 
     public boolean exitThread;
 
+    public <T> T getMeta(String key) {
+        if (meta.containsKey(key))
+            return (T) meta.get(key);
+        return null;
+    }
+
+    public <T> T removeMeta(String key) {
+        if (meta.containsKey(key))
+            return (T) meta.remove(key);
+        return null;
+    }
+
     @Override
     public String toString() {
         return "Task{" +

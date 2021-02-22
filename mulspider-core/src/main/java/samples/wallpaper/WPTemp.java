@@ -16,6 +16,9 @@ public class WPTemp extends SpiderApp {
 
     protected static final String EXTRACT_ITEM = ".extractItem";
     protected static final String EXTRACT_INFO = ".extractInfo";
+    protected static final String TAGS = "tags";
+    protected static final String THUM = "thumbnail";
+    protected static final String RESULT = "result";
 
     protected AtomicInteger index = new AtomicInteger(1);
     protected AtomicInteger count = new AtomicInteger(0);

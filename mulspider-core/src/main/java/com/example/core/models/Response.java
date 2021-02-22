@@ -37,19 +37,32 @@ public class Response extends Task {
         return tagNode;
     }
 
-    public <T> List<T> eval(String xpath) {
-        List<T> list = new ArrayList<>();
+    public List<String> eval(String xpath) {
+        List<String> list = new ArrayList<>();
         try {
             Object[] res = xpath().evaluateXPath(xpath);
             if (ArrayUtils.isEmpty(res))
                 return null;
             for (Object obj : res)
-                list.add((T) obj);
+                list.add(obj == null ? null : String.valueOf(obj));
         } catch (XPatherException e) {
             e.printStackTrace();
         }
 
         return list;
+    }
+
+    public String evalSingle(String xpath) {
+        try {
+            Object[] res = xpath().evaluateXPath(xpath);
+            if (ArrayUtils.isEmpty(res))
+                return null;
+            return String.valueOf(res[0]);
+        } catch (XPatherException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static Response make(Request request, int resCode) {

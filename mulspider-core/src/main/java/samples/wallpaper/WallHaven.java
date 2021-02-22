@@ -50,7 +50,7 @@ public class WallHaven extends WPTemp {
             else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
                 request.headless();
             request.method = infoMethods;
-            request.meta.put("thumbnail", thumbnails.get(thIndex));
+            request.meta.put(THUM, thumbnails.get(thIndex));
             addTask(request);
             logger.debug("request==>" + count.incrementAndGet());
             thIndex++;
@@ -67,11 +67,11 @@ public class WallHaven extends WPTemp {
         model.imgW = wh[0];
         model.imgH = wh[1];
 
-        model.thumbnail = (String) response.request.meta.get("thumbnail");
+        model.thumbnail = (String) response.request.meta.get(THUM);
         model.thumbnailW = "300";
         model.thumbnailH = "200";
         result.result.put("result", model);
-        response.request.meta.remove("thumbnail");
+        response.request.meta.remove(THUM);
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

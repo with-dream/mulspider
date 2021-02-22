@@ -109,7 +109,7 @@ public class SpiderApp {
         Config config = new Config();
 
         config.dbConfig = new DBConfig();
-        config.dbConfig.dbType = Constant.DB_ROCK;
+        config.dbConfig.dbType = Constant.DB_MEMORY;
         config.dbConfig.appName = name;
         config.dbConfig.redis = new RedisConfig();
         config.dbConfig.redis.ip = "127.0.0.1";
