@@ -11,18 +11,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-@Spider(name = WallpaperScraft.NAME, enable = false)
-public class WallpaperScraft extends WPTemp {
-    public static final String NAME = "WallpaperScraft";
-    private static final String EXTRACT_IMG = NAME + ".extractImg";
+@Spider(name = Wallpaperup.NAME, enable = true)
+public class Wallpaperup extends WPTemp {
+    public static final String NAME = "Wallpaperup";
 
-    public WallpaperScraft() {
+    public Wallpaperup() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://wallpaperscraft.com/all/page";
-        infoMethods = new String[]{NAME + EXTRACT_INFO};
+        baseUrl = "https://www.wallpaperup.com";
+        infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         listMethods = new String[]{NAME + EXTRACT_ITEM};
     }
 
@@ -35,16 +33,16 @@ public class WallpaperScraft extends WPTemp {
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
-        List<String> urls = response.eval("//ul[@class='wallpapers__list']/li[@class='wallpapers__item']/a[@class='wallpapers__link']/@href");
+        List<String> urls = response.eval("//*[@id=\"pics-list\"]/p/a/@href");
 
         Result resTmp;
         if ((resTmp = duplicate(response, urls, true)) != null)
             return resTmp;
 
-        List<String> tags = response.eval("//ul[@class='wallpapers__list']/li[@class='wallpapers__item']/a[@class='wallpapers__link']/span[last()]/text()");
+        List<String> tags = response.eval("//*[@id=\"pics-list\"]/p/a/img/@alt");
         if (urls.size() != tags.size())
             throw new RuntimeException("获取数量错误 ==>" + response.request.url);
-        List<String> thumbnails = response.eval("//ul[@class='wallpapers__list']/li[@class='wallpapers__item']/a[@class='wallpapers__link']/span[@class='wallpapers__canvas']/img[@class='wallpapers__image']/@src");
+        List<String> thumbnails = response.eval("//*[@id=\"pics-list\"]/p/a/img/@src");
 
         int urlIndex = 0;
         for (String url : urls) {
@@ -66,38 +64,44 @@ public class WallpaperScraft extends WPTemp {
 
     @ExtractMethod(methods = {NAME + EXTRACT_INFO})
     private Result extractInfo(Response response) {
-        WallpaperScraftModel model = ExtractUtils.extract(response, WallpaperScraftModel.class);
+        Result result = Result.make(response.request);
+        WP10Model model = ExtractUtils.extract(response, WP10Model.class);
         model.imgWrapUrl = response.request.url;
 
         if (response.request.meta.containsKey(TAGS)) {
-            String tag = response.request.removeMeta(TAGS);
-            model.tags = Arrays.asList(tag.split(","));
+            String tag = (String) response.request.meta.get(TAGS);
+            String[] tagList = tag.split(" ");
+            if (tagList.length < 3)
+                tagList = tag.split("-");
+            if (tagList.length < 3)
+                throw new RuntimeException("tag错误==>" + tag);
+            model.tags = new ArrayList<>();
+            String views = null;
+            if (tagList.length != 0) {
+                for (String t : tagList) {
+                    if (t.toLowerCase().contains("views:")) {
+                        views = t.toLowerCase();
+                        continue;
+                    }
+                    model.tags.add(t);
+                }
+            }
             response.request.meta.remove(TAGS);
-        }
 
+            if (views != null) {
+                model.views = views.split(":")[1];
+            }
+        }
         model.imgUrl = response.request.getSite() + model.imgUrl;
         String[] wh = model.imgW.split("x");
         model.imgW = wh[0];
         model.imgH = wh[1];
-        model.thumbnail = response.request.removeMeta(THUM);
-        model.thumbnailW = "300";
-        model.thumbnailH = "168";
+        model.thumbnail = (String) response.request.meta.get(THUM);
+        model.thumbnailW = "400";
+        model.thumbnailH = "225";
+        response.request.meta.remove(THUM);
 
-        response.request.meta.put(RESULT, model);
-        response.request.url = model.imgUrl;
-        response.request.method = new String[]{EXTRACT_IMG, WallPaperResult.WallPaperResult};
-        addTask(response.request);
-
-        return Result.makeIgnore();
-    }
-
-    @ExtractMethod(methods = {EXTRACT_IMG})
-    private Result extractImage(Response response) {
-        Result result = Result.make(response.request);
-        WallpaperScraftModel model = response.request.removeMeta(RESULT);
-        model.imgUrl = response.evalSingle("//a[@class='gui-button gui-button_full-height']/@href");
-
-        result.result.put(RESULT, model);
+        result.result.put("result", model);
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

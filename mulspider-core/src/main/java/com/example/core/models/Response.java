@@ -44,7 +44,7 @@ public class Response extends Task {
             if (ArrayUtils.isEmpty(res))
                 return null;
             for (Object obj : res)
-                list.add(obj == null ? null : String.valueOf(obj));
+                list.add(obj == null ? null : String.valueOf(obj).trim());
         } catch (XPatherException e) {
             e.printStackTrace();
         }
