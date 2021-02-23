@@ -14,7 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = Wallpaperup.NAME, enable = true)
+//remote-loader
+@Spider(name = Wallpaperup.NAME, enable = false)
 public class Wallpaperup extends WPTemp {
     public static final String NAME = "Wallpaperup";
 
@@ -50,11 +51,36 @@ public class Wallpaperup extends WPTemp {
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
-        List<String> urls = response.eval("//*[@id=\"pics-list\"]/p/a/@href");
+        String dataUrl = response.request.getSite() + response.evalSingle("//div[@class='remote-loader no-wrap']/@data-url");
+        if (StringUtils.isEmpty(dataUrl)) {
+            dbManager.put("pageIndex", response.request.getSite());
+            return Result.makeIgnore();
+        }
 
-        Result resTmp;
-        if ((resTmp = duplicate(response, urls, true)) != null)
-            return resTmp;
+        List<String> urls = response.eval("//div[@class='thumb-adv']/figure/a/@href");
+        if (urls == null || urls.isEmpty()) {
+            logger.warn("==>extractItem urls is empty  emptyCount:" + emptyCount + " url:" + response.request.url);
+            dbManager.put("pageIndex", response.request.getSite());
+            return Result.makeIgnore();
+        }
+
+        if (dupList(response.request.getSite(), urls, false) != 0) {
+            dupCount = 0;
+
+        } else if (dupCount++ < 3) {
+            logger.warn("dupCount==>" + dupCount);
+            addRequest(response);
+        } else {
+            logger.warn("==>dup reset");
+            index.set(0);
+            dbManager.put("pageIndex", index.get());
+            emptyCount = 0;
+            dupCount = 0;
+        }
+
+        Request wrapReq = response.request.clone();
+        wrapReq.url = dataUrl;
+        addTask(wrapReq);
 
         List<String> tags = response.eval("//*[@id=\"pics-list\"]/p/a/img/@alt");
         if (urls.size() != tags.size())
