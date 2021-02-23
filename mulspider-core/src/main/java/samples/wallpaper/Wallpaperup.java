@@ -3,6 +3,7 @@ package samples.wallpaper;
 import com.example.core.annotation.ExtractMethod;
 import com.example.core.annotation.Spider;
 import com.example.core.context.Config;
+import com.example.core.download.DownloadWork;
 import com.example.core.extract.ExtractUtils;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
@@ -29,6 +30,22 @@ public class Wallpaperup extends WPTemp {
         config.downThreadCount = 1;
         config.breakpoint = true;
         return config;
+    }
+
+    @Override
+    public void init() {
+        Integer pindex = dbManager.get("pageIndex");
+        if (pindex != null && pindex > 0)
+            index.set(pindex);
+        logger.info("init pindex==>" + pindex);
+        Request request = new Request(name);
+        if (downType == DownloadWork.DownType.CLIENT_POOL)
+            request.httpPool();
+        else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
+            request.headless();
+        request.method = listMethods;
+        request.url = baseUrl;
+        addTask(request, true);
     }
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
