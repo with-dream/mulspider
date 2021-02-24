@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Spider(name = Bing.NAME, enable = true)
+@Spider(name = Bing.NAME, enable = false)
 public class Bing extends WPTemp {
     public static final String NAME = "Bing";
 

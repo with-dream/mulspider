@@ -3,12 +3,10 @@ package samples.wallpaper;
 import com.example.core.annotation.ExtractMethod;
 import com.example.core.annotation.Spider;
 import com.example.core.context.Config;
-import com.example.core.download.DownloadWork;
 import com.example.core.extract.ExtractUtils;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -18,10 +16,11 @@ import java.util.List;
 @Spider(name = Wallpaperup.NAME, enable = false)
 public class Wallpaperup extends WPTemp {
     public static final String NAME = "Wallpaperup";
+    private static final String urlEnd = "/date_added/desc";
 
     public Wallpaperup() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://www.wallpaperup.com";
+        baseUrl = "https://www.wallpaperup.com/latest/";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         listMethods = new String[]{NAME + EXTRACT_ITEM};
     }
@@ -34,58 +33,18 @@ public class Wallpaperup extends WPTemp {
     }
 
     @Override
-    public void init() {
-        Integer pindex = dbManager.get("pageIndex");
-        if (pindex != null && pindex > 0)
-            index.set(pindex);
-        logger.info("init pindex==>" + pindex);
-        Request request = new Request(name);
-        if (downType == DownloadWork.DownType.CLIENT_POOL)
-            request.httpPool();
-        else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
-            request.headless();
-        request.method = listMethods;
-        request.url = baseUrl;
-        addTask(request, true);
+    protected String getUrl() {
+        return baseUrl + index.decrementAndGet() + urlEnd;
     }
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
-        String dataUrl = response.request.getSite() + response.evalSingle("//div[@class='remote-loader no-wrap']/@data-url");
-        if (StringUtils.isEmpty(dataUrl)) {
-            dbManager.put("pageIndex", response.request.getSite());
-            return Result.makeIgnore();
-        }
+        List<String> urls = response.eval("//figure[@class='black']/a/@href");
 
-        List<String> urls = response.eval("//div[@class='thumb-adv']/figure/a/@href");
-        if (urls == null || urls.isEmpty()) {
-            logger.warn("==>extractItem urls is empty  emptyCount:" + emptyCount + " url:" + response.request.url);
-            dbManager.put("pageIndex", response.request.getSite());
-            return Result.makeIgnore();
-        }
-
-        if (dupList(response.request.getSite(), urls, false) != 0) {
-            dupCount = 0;
-
-        } else if (dupCount++ < 3) {
-            logger.warn("dupCount==>" + dupCount);
-            addRequest(response);
-        } else {
-            logger.warn("==>dup reset");
-            index.set(0);
-            dbManager.put("pageIndex", index.get());
-            emptyCount = 0;
-            dupCount = 0;
-        }
-
-        Request wrapReq = response.request.clone();
-        wrapReq.url = dataUrl;
-        addTask(wrapReq);
-
-        List<String> tags = response.eval("//*[@id=\"pics-list\"]/p/a/img/@alt");
-        if (urls.size() != tags.size())
-            throw new RuntimeException("获取数量错误 ==>" + response.request.url);
-        List<String> thumbnails = response.eval("//*[@id=\"pics-list\"]/p/a/img/@src");
+        Result resTmp;
+        if ((resTmp = duplicate(response, urls, true)) != null)
+            return resTmp;
+        List<String> thumbnails = response.eval("//figure[@class='black']/a/img/@data-src");
 
         int urlIndex = 0;
         for (String url : urls) {
@@ -93,9 +52,6 @@ public class Wallpaperup extends WPTemp {
             request.url = response.request.getSite() + url;
             request.method = infoMethods;
 
-            String tag = tags.get(urlIndex);
-            if (StringUtils.isNotEmpty(tag))
-                request.meta.put(TAGS, tag);
             if (!thumbnails.get(urlIndex).isEmpty())
                 request.meta.put(THUM, response.request.getSite() + thumbnails.get(urlIndex));
             addTask(request);

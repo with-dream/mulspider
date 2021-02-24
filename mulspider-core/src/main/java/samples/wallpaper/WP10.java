@@ -69,7 +69,7 @@ public class WP10 extends WPTemp {
         model.imgWrapUrl = response.request.url;
 
         if (response.request.meta.containsKey(TAGS)) {
-            String tag = (String) response.request.meta.get(TAGS);
+            String tag = response.request.removeMeta(TAGS);
             String[] tagList = tag.split(" ");
             if (tagList.length < 3)
                 tagList = tag.split("-");
@@ -86,7 +86,6 @@ public class WP10 extends WPTemp {
                     model.tags.add(t);
                 }
             }
-            response.request.meta.remove(TAGS);
 
             if (views != null) {
                 model.views = views.split(":")[1];
@@ -96,10 +95,9 @@ public class WP10 extends WPTemp {
         String[] wh = model.imgW.split("x");
         model.imgW = wh[0];
         model.imgH = wh[1];
-        model.thumbnail = (String) response.request.meta.get(THUM);
+        model.thumbnail = response.request.removeMeta(THUM);
         model.thumbnailW = "400";
         model.thumbnailH = "225";
-        response.request.meta.remove(THUM);
 
         result.result.put("result", model);
         logger.debug("result==>" + count.decrementAndGet());

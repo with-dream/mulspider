@@ -40,7 +40,7 @@ public class WPTemp extends SpiderApp {
         else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
             request.headless();
         request.method = listMethods;
-        request.url = baseUrl + index.get();
+        request.url = getUrl();
         addTask(request, true);
     }
 
@@ -78,11 +78,13 @@ public class WPTemp extends SpiderApp {
 
     protected void addRequest(Response response) {
         Request request = response.request.clone();
-        int indexTmp = index.incrementAndGet();
-        request.url = baseUrl + indexTmp;
+        request.url = getUrl();
         request.method = listMethods;
         dbManager.put("pageIndex", index.get());
         addTask(request);
     }
 
+    protected String getUrl() {
+        return baseUrl + index.getAndIncrement();
+    }
 }
