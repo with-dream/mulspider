@@ -99,7 +99,7 @@ public class WP10 extends WPTemp {
         model.thumbnailW = "400";
         model.thumbnailH = "225";
 
-        result.result.put("result", model);
+        result.result.put(RESULT, model);
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

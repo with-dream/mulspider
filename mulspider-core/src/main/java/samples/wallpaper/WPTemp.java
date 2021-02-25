@@ -6,10 +6,12 @@ import com.example.core.download.DownloadWork;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
+import com.example.core.utils.CollectionUtils;
 import com.example.core.utils.Constant;
 import org.slf4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WPTemp extends SpiderApp {
@@ -19,6 +21,8 @@ public class WPTemp extends SpiderApp {
     protected static final String EXTRACT_INFO = ".extractInfo";
     protected static final String TAGS = "tags";
     protected static final String THUM = "thumbnail";
+    protected static final String THUMW = "thumW";
+    protected static final String THUMH = "thumH";
     protected static final String RESULT = "result";
     protected static final String RESULTS = "results";
 
@@ -29,6 +33,7 @@ public class WPTemp extends SpiderApp {
     protected String[] infoMethods;
     protected String[] listMethods;
     protected DownloadWork.DownType downType = DownloadWork.DownType.CLIENT_POOL;
+    protected Map<String, String> headers;
 
     @Override
     public void init() {
@@ -36,13 +41,19 @@ public class WPTemp extends SpiderApp {
         if (pindex != null && pindex > 0)
             index.set(pindex);
         logger.info("init pindex==>" + pindex);
+        initRequest(getUrl());
+    }
+
+    protected void initRequest(String url) {
         Request request = new Request(name);
         if (downType == DownloadWork.DownType.CLIENT_POOL)
             request.httpPool();
         else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
             request.headless();
         request.method = listMethods;
-        request.url = getUrl();
+        request.url = url;
+        if (headers != null && !headers.isEmpty())
+            request.headers = headers;
         addTask(request, true);
     }
 

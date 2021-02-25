@@ -3,33 +3,25 @@ package samples.wallpaper;
 import com.example.core.annotation.ExtractMethod;
 import com.example.core.annotation.Spider;
 import com.example.core.context.Config;
-import com.example.core.download.DownloadWork;
-import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
-import com.example.core.utils.Constant;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
-@Spider(name = Unsplash.NAME, enable = true)
-public class Unsplash extends WPTemp {
+@Spider(name = Unsplash.NAME, enable = false)
+public class Unsplash extends WPTempCate {
     public static final String NAME = "Unsplash";
-    private Map<String, AtomicInteger> indexMap = new HashMap<>();
-    private static final String DUP = "dup_";
-    private static final String CATE = "cater";
 
     public Unsplash() {
         logger = LoggerFactory.getLogger(this.getClass());
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         listMethods = new String[]{NAME + EXTRACT_ITEM};
+        homeUrl = "https://unsplash.com";
     }
 
     @Override
@@ -40,17 +32,13 @@ public class Unsplash extends WPTemp {
     }
 
     @Override
-    public void init() {
-        Request request = new Request(name);
-        request.httpPool();
-        request.method = listMethods;
-        request.url = "https://unsplash.com";
-        addTask(request, true);
+    protected String getUrl() {
+        return String.format("https://unsplash.com/napi/landing_pages/wallpapers?page=%d&per_page=20", index.getAndIncrement());
     }
 
     @Override
-    protected String getUrl() {
-        return String.format("https://unsplash.com/napi/landing_pages/wallpapers?page=%d&per_page=20", index.getAndIncrement());
+    protected String getCateUrl(String cate, int index) {
+        return String.format("https://unsplash.com/napi/topics/%s/photos?page=%d&per_page=20", cate, index);
     }
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
@@ -58,28 +46,10 @@ public class Unsplash extends WPTemp {
         List<String> cates = response.eval("//li/a[@class='qvEaq _1CBrG']/@href");
         for (String cate : cates) {
             cate = cate.substring(cate.lastIndexOf("/") + 1);
-            Integer indexTmp = dbManager.get(cate);
-            if (indexTmp == null)
-                indexTmp = 1;
-            AtomicInteger aInt = new AtomicInteger(indexTmp);
-            indexMap.put(cate, aInt);
-            dbManager.put(cate, aInt.get());
-
-            indexMap.put(DUP + cate, new AtomicInteger(0));
-
-            createReq(cate, aInt.get());
+            int cateIndex = initCateIndex(cate);
+            createCateReq(cate, getCateUrl(cate, cateIndex));
         }
         return Result.makeIgnore();
-    }
-
-    private void createReq(String cate, int index) {
-        String url = String.format("https://unsplash.com/napi/topics/%s/photos?page=%d&per_page=20", cate, index);
-        Request request = new Request(name);
-        request.httpPool();
-        request.method = infoMethods;
-        request.meta.put(CATE, cate);
-        request.url = url;
-        addTask(request, true);
     }
 
     @ExtractMethod(methods = {NAME + EXTRACT_INFO})
@@ -92,7 +62,11 @@ public class Unsplash extends WPTemp {
         for (int i = 0; i < photos.size(); i++) {
             UnsplashModel model = new UnsplashModel();
             JsonObject photo = photos.get(i).getAsJsonObject();
-            imgSign.add(photo.get("id").getAsString());
+            String id = photo.get("id").getAsString();
+            if (duplicate(response.request.getSite() + "/" + id, false))
+                continue;
+
+            imgSign.add(id);
             model.imgWrapUrl = response.request.url;
             model.imgUrl = photo.get("urls").getAsJsonObject()
                     .get("raw").getAsString();
@@ -108,25 +82,7 @@ public class Unsplash extends WPTemp {
         }
         result.put(RESULTS, list);
 
-        String cate = response.request.getMeta(CATE);
-        if (dupList(response.request.getSite(), imgSign, true, true) != 0) {
-            indexMap.get(DUP + response.request.getMeta(CATE)).set(0);
-            AtomicInteger integer = indexMap.get(cate);
-            if (Constant.DEBUG && integer.get() > 3)
-                return result;
-            createReq(cate, integer.incrementAndGet());
-            dbManager.put(cate, integer.get());
-        } else {
-            if (indexMap.get(DUP + response.request.getMeta(CATE)).incrementAndGet() < 3) {
-                logger.warn("dupCount==>" + dupCount);
-                createReq(response.request.getMeta(CATE), indexMap.get(CATE).incrementAndGet());
-            } else {
-                logger.warn("==>dup reset");
-                indexMap.get(cate).set(0);
-                dbManager.put(cate, indexMap.get(cate).get());
-                indexMap.get(DUP + cate).set(0);
-            }
-        }
+        dupUrls(response, imgSign, true, true, true);
 
         return result;
     }

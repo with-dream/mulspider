@@ -7,6 +7,7 @@ import com.example.core.download.DownloadHandle;
 import com.example.core.utils.CharsetUtils;
 import com.example.core.utils.ThreadUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
@@ -47,7 +48,14 @@ public class SeleniumDownloader extends DownloadHandle {
                     //因为报表页面必须滚动才能全部展示，这里直接给个很大的高度
 //                    options.addArguments("--window-size=1280,8600");
                 }
-                initProperty("webdriver.chrome.driver", "./plugin/chromedriver");
+
+                String driver = null;
+                if(SystemUtils.IS_OS_WINDOWS)
+                    driver = "./plugin/chromedriver.exe";
+                else if(SystemUtils.IS_OS_MAC)
+                    driver = "./plugin/chromedriver";
+
+                initProperty("webdriver.chrome.driver", driver);
                 webDriver = new ChromeDriver(options);
                 break;
             case PHANTOMJS:
