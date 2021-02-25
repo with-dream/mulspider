@@ -54,26 +54,26 @@ public abstract class Work implements Runnable {
         MethodReflect.MethodMeta mdMeta;
         if (workType == WorkType.extract) {
             if ((mdMeta = mr.defaultMap.get(Constant.DEFAULT_EXTRACT)) != null) {
-                logger.info("test method", String.format("app:%s  %s methodName:%s", request.name, "extract", Constant.DEFAULT_EXTRACT));
+                logger.info(String.format("test method==>app:%s  %s methodName:%s", request.name, "extract", Constant.DEFAULT_EXTRACT));
                 invoke(mr.obj, mdMeta, task, true);
             }
             if (request.method != null && request.method.length != 0) {
                 for (String m : request.method)
                     if ((mdMeta = mr.emMap.get(m)) != null && !mdMeta.share) {
-                        logger.info("test method", String.format("app:%s  %s methodName:%s", request.name, "extract", m));
+                        logger.info(String.format("test method==>app:%s  %s methodName:%s", request.name, "extract", m));
                         invoke(mr.obj, mdMeta, task, true);
                     }
             }
         } else if (workType == WorkType.result) {
             if ((mdMeta = mr.defaultMap.get(Constant.DEFAULT_RESULT)) != null) {
-                logger.info("test method", String.format("app:%s  %s methodName:%s", request.name, "result", Constant.DEFAULT_RESULT));
+                logger.info(String.format("test method==>app:%s  %s methodName:%s", request.name, "result", Constant.DEFAULT_RESULT));
                 invoke(mr.obj, mdMeta, task, false);
             }
 
             if (request.method != null && request.method.length != 0) {
                 for (String m : request.method)
                     if ((mdMeta = mr.rmMap.get(m)) != null && !mdMeta.share) {
-                        logger.info("test method", String.format("app:%s  %s methodName:%s", request.name, "result", m));
+                        logger.info(String.format("test method==>app:%s  %s methodName:%s", request.name, "result", m));
                         invoke(mr.obj, mdMeta, task, false);
                     }
             }
@@ -84,13 +84,13 @@ public abstract class Work implements Runnable {
             if (workType == WorkType.extract) {
                 for (String m : request.method)
                     if ((mdMeta = Context.instance().methodShare.emMap.get(m)) != null) {
-                        logger.info("test method", String.format("app:%s  %s methodName:%s", request.name, "extract", m));
+                        logger.info(String.format("test method==>app:%s  %s methodName:%s", request.name, "extract", m));
                         invoke(mdMeta.mr.singleton ? mdMeta.mr.obj : invokeInit(mdMeta), mdMeta, task, true);
                     }
             } else if (workType == WorkType.result) {
                 for (String m : request.method)
                     if ((mdMeta = Context.instance().methodShare.rmMap.get(m)) != null) {
-                        logger.info("test method", String.format("app:%s  %s methodName:%s", request.name, "result", m));
+                        logger.info(String.format("test method==>app:%s  %s methodName:%s", request.name, "result", m));
                         invoke(mdMeta.mr.singleton ? mdMeta.mr.obj : invokeInit(mdMeta), mdMeta, task, false);
                     }
             }
@@ -99,7 +99,7 @@ public abstract class Work implements Runnable {
             for (Map.Entry<String, MethodReflect.MethodMeta> entry : Context.instance().methodShare.eurMap.entrySet()) {
                 if (Pattern.matches(entry.getKey(), request.url)) {
                     mdMeta = entry.getValue();
-                    logger.info("test method", String.format("app:%s  %s methodName:%s  %s", request.name, "extract", mdMeta.mr.clazz.getName(), mdMeta.method.getName()));
+                    logger.info(String.format("test method==>app:%s  %s methodName:%s  %s", request.name, "extract", mdMeta.mr.clazz.getName(), mdMeta.method.getName()));
                     invoke(mdMeta.mr.singleton ? mdMeta.mr.obj : invokeInit(mdMeta), mdMeta, task, true);
                 }
             }
@@ -107,7 +107,7 @@ public abstract class Work implements Runnable {
             for (Map.Entry<String, MethodReflect.MethodMeta> entry : Context.instance().methodShare.rurMap.entrySet()) {
                 if (Pattern.matches(entry.getKey(), request.url)) {
                     mdMeta = entry.getValue();
-                    logger.info("test method", String.format("app:%s  %s methodName:%s  %s", request.name, "result", mdMeta.mr.clazz.getName(), mdMeta.method.getName()));
+                    logger.info(String.format("test method==>app:%s  %s methodName:%s  %s", request.name, "result", mdMeta.mr.clazz.getName(), mdMeta.method.getName()));
                     invoke(mdMeta.mr.singleton ? mdMeta.mr.obj : invokeInit(mdMeta), mdMeta, task, false);
                 }
             }

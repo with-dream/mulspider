@@ -6,6 +6,7 @@ import com.example.core.download.DownloadWork;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
+import com.example.core.utils.Constant;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class WPTemp extends SpiderApp {
     protected static final String TAGS = "tags";
     protected static final String THUM = "thumbnail";
     protected static final String RESULT = "result";
+    protected static final String RESULTS = "results";
 
     protected AtomicInteger index = new AtomicInteger(1);
     protected AtomicInteger count = new AtomicInteger(0);
@@ -59,9 +61,9 @@ public class WPTemp extends SpiderApp {
         }
         emptyCount = 0;
 
-        if (dupList(site ? response.request.getSite() : "", urls, separator) != 0) {
+        if (dupList(site ? response.request.getSite() : "", urls, separator, false) != 0) {
             dupCount = 0;
-            if (index.get() != 10)
+            if (Constant.DEBUG && index.get() < 10)
                 addRequest(response);
         } else if (dupCount++ < 3) {
             logger.warn("dupCount==>" + dupCount);

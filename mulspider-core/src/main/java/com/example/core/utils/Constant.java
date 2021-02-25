@@ -1,6 +1,7 @@
 package com.example.core.utils;
 
 public class Constant {
+    public static final boolean DEBUG = true;
     public static final String DEFAULT_EXTRACT_NAME = "extract";
     public static final String DEFAULT_RESULT_NAME = "result";
     public static final String DEFAULT_EXTRACT = "default_" + DEFAULT_EXTRACT_NAME;
