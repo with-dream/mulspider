@@ -6,5 +6,6 @@ public class Test {
     public static void main(String[] args) {
 
 //        logger.error("error level==>"+SystemUntils.IS);
+        logger.error("%s{}", "=====");
     }
 }

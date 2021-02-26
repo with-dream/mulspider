@@ -10,6 +10,8 @@ public class Constant {
     public static final String REQUEST = "request";
     public static final String EXTRACT = "extract";
     public static final String RESULT = "result";
+    public static final String DOWN_FILE = "__down_file__";
+    public static final String DOWN_FILE_RES = "__down_file_response__";
 
     public static final int DB_ROCK = 0;
     public static final int DB_MEMORY = 1;

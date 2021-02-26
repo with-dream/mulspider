@@ -84,15 +84,17 @@ public class Bing extends WPTemp {
         model.views = response.request.removeMeta("view");
         model.fav = response.request.removeMeta("fav");
 
-        model.imgUrl = response.evalSingle("//img[@class='target progressive__img progressive--not-loaded']/@data-progressive");
-        model.imgW = "1920";
-        model.imgH = "1080";
-        model.thumbnail = (String) response.request.meta.get(THUM);
-        model.thumbnailW = "427";
-        model.thumbnailH = "320";
-        response.request.meta.remove(THUM);
+//        model.imgUrl = response.evalSingle("//img[@class='target progressive__img progressive--not-loaded']/@data-progressive");
+//        model.imgW = "1920";
+//        model.imgH = "1080";
+//        model.thumbnail = response.request.removeMeta(THUM);
+//        model.thumbnailW = "427";
+//        model.thumbnailH = "320";
 
-        result.result.put("result", model);
+        WallPaperResultModel resModel = model.cover();
+        result.result.put(RESULT, resModel);
+        downFile(resModel);
+
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

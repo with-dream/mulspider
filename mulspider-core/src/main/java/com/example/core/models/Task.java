@@ -17,6 +17,10 @@ public class Task implements Serializable, Comparable<Task> {
 
     public boolean exitThread;
 
+    public void put(String key, Object value) {
+        meta.put(key, value);
+    }
+
     public <T> T getMeta(String key) {
         if (meta.containsKey(key))
             return (T) meta.get(key);

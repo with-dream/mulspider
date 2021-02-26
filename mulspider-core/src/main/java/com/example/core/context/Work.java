@@ -19,6 +19,7 @@ public abstract class Work implements Runnable {
     public enum WorkType {
         request, extract, result
     }
+
     protected final static Logger logger = LoggerFactory.getLogger(Work.class);
     protected int threadIndex = -1;
     public AtomicInteger threadCount;
@@ -147,7 +148,7 @@ public abstract class Work implements Runnable {
                     dbManager.addTask(result);
                 }
             } else
-                logger.error(obj.getClass().getSimpleName() + "." + mdMeta.method.getName() + "  extract result is null");
+                logger.error("{}.{} extract result is null", obj.getClass().getSimpleName(), mdMeta.method.getName());
         }
 
         if (mdMeta.mr.releaseMeta != null && !mdMeta.mr.isApp && !mdMeta.mr.singleton)

@@ -78,7 +78,10 @@ public class Pixabay extends WPTemp {
         model.thumbnailW = "400";
         model.thumbnailH = "225";
 
-        result.result.put("result", model);
+        WallPaperResultModel resModel = model.cover();
+        result.result.put(RESULT, resModel);
+        downFile(resModel);
+
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

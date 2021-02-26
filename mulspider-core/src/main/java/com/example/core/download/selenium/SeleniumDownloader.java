@@ -110,7 +110,7 @@ public class SeleniumDownloader extends DownloadHandle {
 
             webDriver.get(request.url);
         } catch (Exception e) {
-            logger.error("Driver dowork==>" + request.url + "  err:" + e.getMessage());
+            logger.error("Driver dowork url:{}  err:{}", request.url, e.getMessage());
         } finally {
             ThreadUtils.sleep(300);
             WebElement webElement = webDriver.findElement(By.xpath("/html"));

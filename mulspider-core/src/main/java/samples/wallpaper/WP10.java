@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = WP10.NAME, enable = false)
+@Spider(name = WP10.NAME, enable = true)
 public class WP10 extends WPTemp {
     public static final String NAME = "WP10";
 
@@ -99,8 +99,12 @@ public class WP10 extends WPTemp {
         model.thumbnailW = "400";
         model.thumbnailH = "225";
 
-        result.result.put(RESULT, model);
+        WallPaperResultModel resModel = model.cover();
+        result.result.put(RESULT, resModel);
+        downFile(resModel);
+
         logger.debug("result==>" + count.decrementAndGet());
+
         return result;
     }
 }

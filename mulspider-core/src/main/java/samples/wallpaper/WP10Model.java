@@ -38,4 +38,8 @@ public class WP10Model implements Serializable {
                 ", thumbnailH='" + thumbnailH + '\'' +
                 '}';
     }
+
+    public WallPaperResultModel cover() {
+        return new WallPaperResultModel(imgWrapUrl, imgUrl, tags, fav, views);
+    }
 }

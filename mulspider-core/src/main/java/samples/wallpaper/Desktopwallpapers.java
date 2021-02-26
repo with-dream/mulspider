@@ -94,7 +94,10 @@ public class Desktopwallpapers extends WPTemp {
         model.thumbnailW = "290";
         model.thumbnailH = "200";
 
-        result.result.put(RESULT, model);
+        WallPaperResultModel resModel = model.cover();
+        result.result.put(RESULT, resModel);
+        downFile(resModel);
+
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

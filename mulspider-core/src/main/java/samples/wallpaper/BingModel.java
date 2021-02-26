@@ -18,6 +18,10 @@ public class BingModel implements Serializable {
     public String thumbnailW;
     public String thumbnailH;
 
+    public WallPaperResultModel cover() {
+        return new WallPaperResultModel(imgWrapUrl, imgUrl, tags, fav, views);
+    }
+
     @Override
     public String toString() {
         return "WP10Model{" +

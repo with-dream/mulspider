@@ -97,7 +97,10 @@ public class WallpaperScraft extends WPTemp {
         WallpaperScraftModel model = response.request.removeMeta(RESULT);
         model.imgUrl = response.evalSingle("//a[@class='gui-button gui-button_full-height']/@href");
 
-        result.result.put(RESULT, model);
+        WallPaperResultModel resModel = model.cover();
+        result.result.put(RESULT, resModel);
+        downFile(resModel);
+
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

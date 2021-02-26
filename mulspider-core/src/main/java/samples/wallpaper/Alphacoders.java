@@ -62,36 +62,38 @@ public class Alphacoders extends WPTemp {
         Result result = Result.make(response.request);
         AlphacoderModel model = ExtractUtils.extract(response, AlphacoderModel.class);
         model.imgWrapUrl = response.request.url;
-        model.thumbnail = (String) response.request.meta.get(THUM);
-        model.thumbnailW = "600";
-        model.thumbnailH = "375";
-        response.request.meta.remove(THUM);
+//        model.thumbnail = response.request.removeMeta(THUM);
+//        model.thumbnailW = "600";
+//        model.thumbnailH = "375";
 
         if (StringUtils.isNotEmpty(model.fav))
             model.fav = model.fav.trim();
         if (StringUtils.isNotEmpty(model.views))
             model.views = model.views.trim();
 
-        if (!CollectionUtils.isEmpty(model.sizeContent)) {
-            for (String c : model.sizeContent)
-                if (c.contains("MB") || c.contains("kB")) {
-                    int index = c.indexOf("MB");
-                    if (index <= 0)
-                        index = c.indexOf("kB");
-                    model.size = c.substring(0, index + 2).trim();
-                    break;
-                }
-            model.sizeContent.clear();
-        }
+//        if (!CollectionUtils.isEmpty(model.sizeContent)) {
+//            for (String c : model.sizeContent)
+//                if (c.contains("MB") || c.contains("kB")) {
+//                    int index = c.indexOf("MB");
+//                    if (index <= 0)
+//                        index = c.indexOf("kB");
+//                    model.size = c.substring(0, index + 2).trim();
+//                    break;
+//                }
+//            model.sizeContent.clear();
+//        }
 
-        if (model.colors != null && !model.colors.isEmpty()) {
-            List<String> colorList = new ArrayList<>(model.colors.size());
-            for (String c : model.colors)
-                colorList.add(c.split(":")[1]);
-            model.colors = colorList;
-        }
+//        if (model.colors != null && !model.colors.isEmpty()) {
+//            List<String> colorList = new ArrayList<>(model.colors.size());
+//            for (String c : model.colors)
+//                colorList.add(c.split(":")[1]);
+//            model.colors = colorList;
+//        }
 
-        result.result.put("result", model);
+        WallPaperResultModel resModel = model.cover();
+        result.result.put(RESULT, resModel);
+        downFile(resModel);
+
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

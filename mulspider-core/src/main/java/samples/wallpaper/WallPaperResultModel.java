@@ -2,31 +2,30 @@ package samples.wallpaper;
 
 import com.example.core.annotation.SField;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class WallpaperMaidenModel implements Serializable {
+public class WallPaperResultModel {
     private static final long serialVersionUID = 673293417482457120L;
 
+    public WallPaperResultModel(String imgWrapUrl, String imgUrl, List<String> tags, String fav, String views) {
+        this.imgWrapUrl = imgWrapUrl;
+        this.imgUrl = imgUrl;
+        this.tags = tags;
+        this.fav = fav;
+        this.views = views;
+    }
+
     public String imgWrapUrl;
-    @SField(xpath = "//div[@class='wpPSCList']/ul/li/a/@href")
     public String imgUrl;
     public List<String> tags;
-    @SField(xpath = "//div[@class='wpPSCList']/ul/li/a/text()")
     public String imgW;
     public String imgH;
-    @SField(xpath = "//div[@class='wpInformationList']/div[3]/div[@class='wpInformationInfo']/div[@class='wpInformationButton']/a/text()")
     public String size;
     public String fav;
-    @SField(xpath = "//div[@class='wpInformationList']/div[5]/div[@class='wpInformationInfo']/div[@class='wpInformationButton']/a/text()")
     public String views;
     public String thumbnail;
     public String thumbnailW;
     public String thumbnailH;
-
-    public WallPaperResultModel cover() {
-        return new WallPaperResultModel(imgWrapUrl, imgUrl, tags, fav, views);
-    }
 
     @Override
     public String toString() {

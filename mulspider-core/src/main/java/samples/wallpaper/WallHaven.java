@@ -62,15 +62,18 @@ public class WallHaven extends WPTemp {
         Result result = Result.make(response.request);
         WallHavenModel model = ExtractUtils.extract(response, WallHavenModel.class);
         model.imgWrapUrl = response.request.url;
-        String[] wh = model.imgW.split("x");
-        model.imgW = wh[0];
-        model.imgH = wh[1];
+//        String[] wh = model.imgW.split("x");
+//        model.imgW = wh[0];
+//        model.imgH = wh[1];
 
-        model.thumbnail = (String) response.request.meta.get(THUM);
-        model.thumbnailW = "300";
-        model.thumbnailH = "200";
-        result.result.put("result", model);
-        response.request.meta.remove(THUM);
+//        model.thumbnail = (String) response.request.meta.get(THUM);
+//        model.thumbnailW = "300";
+//        model.thumbnailH = "200";
+
+        WallPaperResultModel resModel = model.cover();
+        result.result.put(RESULT, resModel);
+        downFile(resModel);
+
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

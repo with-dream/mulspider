@@ -10,8 +10,10 @@ import com.example.core.utils.CollectionUtils;
 import com.example.core.utils.Constant;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WPTemp extends SpiderApp {
@@ -32,6 +34,7 @@ public class WPTemp extends SpiderApp {
     protected String baseUrl;
     protected String[] infoMethods;
     protected String[] itemMethods;
+    protected String[] downMethods;
     protected DownloadWork.DownType downType = DownloadWork.DownType.CLIENT_POOL;
     protected Map<String, String> headers;
 
@@ -41,6 +44,7 @@ public class WPTemp extends SpiderApp {
         if (pindex != null && pindex > 0)
             index.set(pindex);
         logger.info("init pindex==>" + pindex);
+        downMethods = new String[]{WallPaperResult.WallPaperFile};
         initRequest(getUrl());
     }
 
@@ -103,5 +107,14 @@ public class WPTemp extends SpiderApp {
 
     protected String getUrl() {
         return baseUrl + index.getAndIncrement();
+    }
+
+    protected void downFile(WallPaperResultModel model) {
+        Request request = new Request(name);
+        request.url = model.imgUrl;
+        request.method = downMethods;
+
+        request.meta.put(Constant.DOWN_FILE, WallPaperResult.DOWN_PATH + name + File.separator + UUID.randomUUID().toString());
+        addTask(request);
     }
 }
