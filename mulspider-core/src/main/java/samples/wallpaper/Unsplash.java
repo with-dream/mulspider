@@ -13,14 +13,15 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = Unsplash.NAME, enable = false)
+@Spider(name = Unsplash.NAME, enable = true)
 public class Unsplash extends WPTempCate {
     public static final String NAME = "Unsplash";
 
     public Unsplash() {
         logger = LoggerFactory.getLogger(this.getClass());
-        infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
-        listMethods = new String[]{NAME + EXTRACT_ITEM};
+        cateMethods = new String[]{NAME + EXTRACT_CATE};
+        infoMethods = new String[]{NAME + EXTRACT_INFO};
+        itemMethods = new String[]{NAME + EXTRACT_ITEM};
         homeUrl = "https://unsplash.com";
     }
 
@@ -41,8 +42,8 @@ public class Unsplash extends WPTempCate {
         return String.format("https://unsplash.com/napi/topics/%s/photos?page=%d&per_page=20", cate, index);
     }
 
-    @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
-    private Result extractItem(Response response) {
+    @ExtractMethod(methods = {NAME + EXTRACT_CATE})
+    private Result extractCate(Response response) {
         List<String> cates = response.eval("//li/a[@class='qvEaq _1CBrG']/@href");
         for (String cate : cates) {
             cate = cate.substring(cate.lastIndexOf("/") + 1);
@@ -52,9 +53,10 @@ public class Unsplash extends WPTempCate {
         return Result.makeIgnore();
     }
 
-    @ExtractMethod(methods = {NAME + EXTRACT_INFO})
-    private Result extractInfo(Response response) {
+    @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
+    private Result extractItem(Response response) {
         Result result = Result.make(response.request);
+        response.request.method = new String[]{WallPaperResult.WallPaperResult};
 
         List<UnsplashModel> list = new ArrayList<>();
         List<String> imgSign = new ArrayList<>();

@@ -42,7 +42,7 @@ public class Response extends Task {
         try {
             Object[] res = xpath().evaluateXPath(xpath);
             if (ArrayUtils.isEmpty(res))
-                return null;
+                return list;
             for (Object obj : res)
                 list.add(obj == null ? null : String.valueOf(obj).trim());
         } catch (XPatherException e) {

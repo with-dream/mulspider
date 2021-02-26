@@ -4,7 +4,6 @@ import com.example.core.annotation.ExtractMethod;
 import com.example.core.context.Config;
 import com.example.core.annotation.Spider;
 import com.example.core.download.DownloadWork;
-import com.example.core.download.selenium.SeleniumDownloader;
 import com.example.core.extract.ExtractUtils;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
@@ -21,7 +20,7 @@ public class WallHaven extends WPTemp {
         logger = LoggerFactory.getLogger(this.getClass());
         baseUrl = "https://wallhaven.cc/latest?page=";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
-        listMethods = new String[]{NAME + EXTRACT_ITEM};
+        itemMethods = new String[]{NAME + EXTRACT_ITEM};
         downType = DownloadWork.DownType.CLIENT_POOL;
     }
 
@@ -61,7 +60,7 @@ public class WallHaven extends WPTemp {
     @ExtractMethod(methods = {NAME + EXTRACT_INFO})
     private Result extractInfo(Response response) {
         Result result = Result.make(response.request);
-        WHModel model = ExtractUtils.extract(response, WHModel.class);
+        WallHavenModel model = ExtractUtils.extract(response, WallHavenModel.class);
         model.imgWrapUrl = response.request.url;
         String[] wh = model.imgW.split("x");
         model.imgW = wh[0];

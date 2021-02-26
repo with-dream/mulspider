@@ -21,7 +21,7 @@ public class WP10 extends WPTemp {
         logger = LoggerFactory.getLogger(this.getClass());
         baseUrl = "https://10wallpaper.com/List_wallpapers/page/";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
-        listMethods = new String[]{NAME + EXTRACT_ITEM};
+        itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }
 
     @Override

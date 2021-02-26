@@ -15,19 +15,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class WPTempCate extends WPTemp {
     protected Map<String, AtomicInteger> indexMap = new HashMap<>();
+    protected static final String EXTRACT_CATE = ".extractCate";
+
     protected static final String DUP = "dup_";
     protected static final String CATE = "cater";
+    protected String[] cateMethods;
     protected String homeUrl;
 
     @Override
     public void init() {
-        initRequest(homeUrl);
+        initRequest(homeUrl, cateMethods);
     }
 
     protected int initCateIndex(String cate) {
+        return initCateIndex(cate, 1);
+    }
+
+    protected int initCateIndex(String cate, int start) {
         Integer indexTmp = dbManager.get(cate);
         if (indexTmp == null)
-            indexTmp = 1;
+            indexTmp = start;
         AtomicInteger aInt = new AtomicInteger(indexTmp);
         indexMap.put(cate, aInt);
         dbManager.put(cate, aInt.get());
@@ -38,7 +45,7 @@ public class WPTempCate extends WPTemp {
     protected void createCateReq(String cate, String url) {
         Request request = new Request(name);
         request.httpPool();
-        request.method = infoMethods;
+        request.method = itemMethods;
         request.meta.put(CATE, cate);
         request.url = url;
         addTask(request, true);
@@ -46,6 +53,13 @@ public class WPTempCate extends WPTemp {
 
     protected String getCateUrl(String cate, int index) {
         return null;
+    }
+
+    protected void addRequest(Response response, String url) {
+        Request request = response.request.clone();
+        request.method = infoMethods;
+        request.url = response.request.getSite() + url;
+        addTask(request);
     }
 
     protected boolean dupUrls(Response response, List<String> urls, boolean site, boolean separator, boolean save) {
@@ -67,6 +81,7 @@ public class WPTempCate extends WPTemp {
                 dbManager.put(cate, indexMap.get(cate).get());
                 indexMap.get(DUP + cate).set(0);
             }
+            return false;
         }
         return true;
     }

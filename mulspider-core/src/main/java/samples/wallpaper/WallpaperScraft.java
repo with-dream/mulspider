@@ -23,7 +23,7 @@ public class WallpaperScraft extends WPTemp {
         logger = LoggerFactory.getLogger(this.getClass());
         baseUrl = "https://wallpaperscraft.com/all/page";
         infoMethods = new String[]{NAME + EXTRACT_INFO};
-        listMethods = new String[]{NAME + EXTRACT_ITEM};
+        itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }
 
     @Override

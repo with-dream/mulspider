@@ -22,7 +22,7 @@ public class Alphacoders extends WPTemp {
         logger = LoggerFactory.getLogger(this.getClass());
         baseUrl = "https://wall.alphacoders.com/newest_wallpapers.php?page=";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
-        listMethods = new String[]{NAME + EXTRACT_ITEM};
+        itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }
 
     @Override

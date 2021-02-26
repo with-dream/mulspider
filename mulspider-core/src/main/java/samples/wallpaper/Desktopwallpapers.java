@@ -23,7 +23,7 @@ public class Desktopwallpapers extends WPTemp {
         logger = LoggerFactory.getLogger(this.getClass());
         baseUrl = "http://desktopwallpapers.org.ua/page/";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
-        listMethods = new String[]{NAME + EXTRACT_ITEM};
+        itemMethods = new String[]{NAME + EXTRACT_ITEM};
         headers = new HashMap<>();
         headers.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
         headers.put("Accept-Encoding", "gzip, deflate");

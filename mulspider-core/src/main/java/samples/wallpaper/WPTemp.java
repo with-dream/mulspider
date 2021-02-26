@@ -31,7 +31,7 @@ public class WPTemp extends SpiderApp {
     protected int emptyCount, dupCount;
     protected String baseUrl;
     protected String[] infoMethods;
-    protected String[] listMethods;
+    protected String[] itemMethods;
     protected DownloadWork.DownType downType = DownloadWork.DownType.CLIENT_POOL;
     protected Map<String, String> headers;
 
@@ -44,17 +44,21 @@ public class WPTemp extends SpiderApp {
         initRequest(getUrl());
     }
 
-    protected void initRequest(String url) {
+    protected void initRequest(String url, String[] mothods) {
         Request request = new Request(name);
         if (downType == DownloadWork.DownType.CLIENT_POOL)
             request.httpPool();
         else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
             request.headless();
-        request.method = listMethods;
+        request.method = mothods;
         request.url = url;
         if (headers != null && !headers.isEmpty())
             request.headers = headers;
         addTask(request, true);
+    }
+
+    protected void initRequest(String url) {
+        initRequest(url, itemMethods);
     }
 
     protected Result duplicate(Response response, List<String> urls, boolean site) {
@@ -92,7 +96,7 @@ public class WPTemp extends SpiderApp {
     protected void addRequest(Response response) {
         Request request = response.request.clone();
         request.url = getUrl();
-        request.method = listMethods;
+        request.method = itemMethods;
         dbManager.put("pageIndex", index.get());
         addTask(request);
     }

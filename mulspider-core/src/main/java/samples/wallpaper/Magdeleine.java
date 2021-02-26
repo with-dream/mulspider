@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = Pixabay.NAME, enable = false)
-public class Pixabay extends WPTemp {
-    public static final String NAME = "Pixabay";
+@Spider(name = Magdeleine.NAME, enable = false)
+public class Magdeleine extends WPTemp {
+    public static final String NAME = "Magdeleine";
 
-    public Pixabay() {
+    public Magdeleine() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://pixabay.com/zh/photos/search/?order=latest&pagi=";
+        baseUrl = "https://magdeleine.co/browse/page/";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }
@@ -33,17 +33,16 @@ public class Pixabay extends WPTemp {
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
-        List<String> urls = response.eval("//*div[@class='credits']/div[@class='item']/a/@href");
+        List<String> urls = response.eval("//*[@id=\"pics-list\"]/p/a/@href");
 
         Result resTmp;
         if ((resTmp = duplicate(response, urls, true)) != null)
             return resTmp;
 
-        List<String> thumbnails = response.eval("//*div[@class='credits']/div[@class='item']/a/img/@src");
-        List<String> thumW = response.eval("//*div[@class='credits']/div[@class='item']/@data-w");
-        List<String> thumH = response.eval("//*div[@class='credits']/div[@class='item']/@data-h");
-        if (thumbnails.size() != thumW.size() || thumbnails.size() != thumH.size())
-            throw new RuntimeException("缩略图与尺寸数量不对应");
+        List<String> tags = response.eval("//*[@id=\"pics-list\"]/p/a/img/@alt");
+        if (urls.size() != tags.size())
+            throw new RuntimeException("获取数量错误 ==>" + response.request.url);
+        List<String> thumbnails = response.eval("//*[@id=\"pics-list\"]/p/a/img/@src");
 
         int urlIndex = 0;
         for (String url : urls) {
@@ -51,12 +50,11 @@ public class Pixabay extends WPTemp {
             request.url = response.request.getSite() + url;
             request.method = infoMethods;
 
+            String tag = tags.get(urlIndex);
+            if (StringUtils.isNotEmpty(tag))
+                request.meta.put(TAGS, tag);
             if (!thumbnails.get(urlIndex).isEmpty())
-                request.meta.put(THUM, thumbnails.get(urlIndex));
-            if (!thumW.get(urlIndex).isEmpty())
-                request.meta.put(THUMW, thumW.get(urlIndex));
-            if (!thumH.get(urlIndex).isEmpty())
-                request.meta.put(THUMH, thumH.get(urlIndex));
+                request.meta.put(THUM, response.request.getSite() + thumbnails.get(urlIndex));
             addTask(request);
             logger.debug("request==>" + count.incrementAndGet());
             urlIndex++;
@@ -70,6 +68,29 @@ public class Pixabay extends WPTemp {
         WP10Model model = ExtractUtils.extract(response, WP10Model.class);
         model.imgWrapUrl = response.request.url;
 
+        if (response.request.meta.containsKey(TAGS)) {
+            String tag = response.request.removeMeta(TAGS);
+            String[] tagList = tag.split(" ");
+            if (tagList.length < 3)
+                tagList = tag.split("-");
+            if (tagList.length < 3)
+                throw new RuntimeException("tag错误==>" + tag);
+            model.tags = new ArrayList<>();
+            String views = null;
+            if (tagList.length != 0) {
+                for (String t : tagList) {
+                    if (t.toLowerCase().contains("views:")) {
+                        views = t.toLowerCase();
+                        continue;
+                    }
+                    model.tags.add(t);
+                }
+            }
+
+            if (views != null) {
+                model.views = views.split(":")[1];
+            }
+        }
         model.imgUrl = response.request.getSite() + model.imgUrl;
         String[] wh = model.imgW.split("x");
         model.imgW = wh[0];
@@ -78,7 +99,7 @@ public class Pixabay extends WPTemp {
         model.thumbnailW = "400";
         model.thumbnailH = "225";
 
-        result.result.put("result", model);
+        result.result.put(RESULT, model);
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

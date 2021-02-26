@@ -5,7 +5,7 @@ import com.example.core.annotation.SField;
 import java.io.Serializable;
 import java.util.List;
 
-public class WHModel implements Serializable {
+public class WallHavenModel implements Serializable {
     private static final long serialVersionUID = 673293417482457120L;
 
     public String imgWrapUrl;
