@@ -84,18 +84,6 @@ public class HttpClientPool {
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
         httpClientBuilder.setConnectionManager(connectionManager);
         httpClientBuilder.setUserAgent(StringUtils.isEmpty(request.userAgent) ? "" : request.userAgent);
-//        if (site.isUseGzip()) {
-//            httpClientBuilder.addInterceptorFirst(new HttpRequestInterceptor() {
-//
-//                public void process(
-//                        final HttpRequest request,
-//                        final HttpContext context) throws HttpException, IOException {
-//                    if (!request.containsHeader("Accept-Encoding")) {
-//                        request.addHeader("Accept-Encoding", "gzip");
-//                    }
-//                }
-//            });
-//        }
         //解决post/redirect/post 302跳转问题
         httpClientBuilder.setRedirectStrategy(new CustomRedirectStrategy());
 

@@ -49,10 +49,14 @@ public class SeleniumDownloader extends DownloadHandle {
 //                    options.addArguments("--window-size=1280,8600");
                 }
 
+                if (request.headers != null && !request.headers.isEmpty())
+                    for (Map.Entry<String, String> entry : request.headers.entrySet())
+                        options.addArguments(entry.getKey() + "=" + entry.getValue());
+
                 String driver = null;
-                if(SystemUtils.IS_OS_WINDOWS)
+                if (SystemUtils.IS_OS_WINDOWS)
                     driver = "./plugin/chromedriver.exe";
-                else if(SystemUtils.IS_OS_MAC)
+                else if (SystemUtils.IS_OS_MAC)
                     driver = "./plugin/chromedriver";
 
                 initProperty("webdriver.chrome.driver", driver);

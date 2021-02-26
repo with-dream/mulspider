@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = Unsplash.NAME, enable = true)
+@Spider(name = Unsplash.NAME, enable = false)
 public class Unsplash extends WPTempCate {
     public static final String NAME = "Unsplash";
 
