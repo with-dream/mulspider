@@ -31,33 +31,26 @@ public class Magdeleine extends WPTemp {
         return config;
     }
 
+    @Override
+    protected String getUrl() {
+        return super.getUrl() + "/";
+    }
+
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
-        List<String> urls = response.eval("//*[@id=\"pics-list\"]/p/a/@href");
+        List<String> urls = response.eval("//a[@class='photo-link']/@href");
 
         Result resTmp;
         if ((resTmp = duplicate(response, urls, true)) != null)
             return resTmp;
 
-        List<String> tags = response.eval("//*[@id=\"pics-list\"]/p/a/img/@alt");
-        if (urls.size() != tags.size())
-            throw new RuntimeException("获取数量错误 ==>" + response.request.url);
-        List<String> thumbnails = response.eval("//*[@id=\"pics-list\"]/p/a/img/@src");
-
-        int urlIndex = 0;
         for (String url : urls) {
             Request request = new Request(name);
-            request.url = response.request.getSite() + url;
+            request.url = url;
             request.method = infoMethods;
 
-            String tag = tags.get(urlIndex);
-            if (StringUtils.isNotEmpty(tag))
-                request.meta.put(TAGS, tag);
-            if (!thumbnails.get(urlIndex).isEmpty())
-                request.meta.put(THUM, response.request.getSite() + thumbnails.get(urlIndex));
             addTask(request);
             logger.debug("request==>" + count.incrementAndGet());
-            urlIndex++;
         }
         return Result.makeIgnore();
     }
@@ -65,41 +58,13 @@ public class Magdeleine extends WPTemp {
     @ExtractMethod(methods = {NAME + EXTRACT_INFO})
     private Result extractInfo(Response response) {
         Result result = Result.make(response.request);
-        WP10Model model = ExtractUtils.extract(response, WP10Model.class);
+        MagdeleineModel model = ExtractUtils.extract(response, MagdeleineModel.class);
         model.imgWrapUrl = response.request.url;
 
-        if (response.request.meta.containsKey(TAGS)) {
-            String tag = response.request.removeMeta(TAGS);
-            String[] tagList = tag.split(" ");
-            if (tagList.length < 3)
-                tagList = tag.split("-");
-            if (tagList.length < 3)
-                throw new RuntimeException("tag错误==>" + tag);
-            model.tags = new ArrayList<>();
-            String views = null;
-            if (tagList.length != 0) {
-                for (String t : tagList) {
-                    if (t.toLowerCase().contains("views:")) {
-                        views = t.toLowerCase();
-                        continue;
-                    }
-                    model.tags.add(t);
-                }
-            }
+        WallPaperResultModel resModel = model.cover();
+        result.result.put(RESULT, resModel);
+        downFile(resModel);
 
-            if (views != null) {
-                model.views = views.split(":")[1];
-            }
-        }
-        model.imgUrl = response.request.getSite() + model.imgUrl;
-        String[] wh = model.imgW.split("x");
-        model.imgW = wh[0];
-        model.imgH = wh[1];
-        model.thumbnail = response.request.removeMeta(THUM);
-        model.thumbnailW = "400";
-        model.thumbnailH = "225";
-
-        result.result.put(RESULT, model);
         logger.debug("result==>" + count.decrementAndGet());
         return result;
     }

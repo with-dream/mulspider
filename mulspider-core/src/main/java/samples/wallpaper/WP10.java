@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = WP10.NAME, enable = true)
+@Spider(name = WP10.NAME, enable = false)
 public class WP10 extends WPTemp {
     public static final String NAME = "WP10";
 
