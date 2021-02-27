@@ -87,10 +87,10 @@ public class HttpClientPoolDownloader extends DownloadHandle {
 
                 EntityUtils.consume(httpEntity);
 
-                response.put(Constant.DOWN_FILE_RES, contentLength == totalRead);
+                response.put(Constant.DOWN_FILE_RES, (contentLength <= 0 && totalRead > 0) || contentLength == totalRead);
                 if (contentLength != totalRead) {
                     if (!new File(file).delete())
-                        logger.error("file {} download failed and delete failed", file);
+                        logger.error("contentLength:{} totalRead:{}  file {} download failed and delete failed", contentLength, totalRead, file);
                 }
             } catch (Exception e) {
                 logger.error("down load file err:{}   req info:{}", e.getMessage(), request);

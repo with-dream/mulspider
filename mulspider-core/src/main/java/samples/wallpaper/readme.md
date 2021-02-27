@@ -15,3 +15,11 @@
 - https://www.gamewallpapers.com/wallpapers.php?titelpage=Diablo+Immortal&page=game 游戏壁纸 没有登录 最大1080P 也够了 
 - http://simpledesktops.com/browse/ 简单的图标
 - https://www.goodfon.com/ 高清壁纸 下载不动
+
+
+
+
+
+https://pickywallpapers.com/
+http://www.brodyaga.com/
+https://www.socwall.com/

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = Wunderstock.NAME, enable = true)
+@Spider(name = Wunderstock.NAME, enable = false)
 public class Wunderstock extends WPTempCate {
     public static final String NAME = "Wunderstock";
     public static final int OFFSET = 30;

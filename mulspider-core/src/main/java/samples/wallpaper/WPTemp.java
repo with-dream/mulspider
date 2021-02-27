@@ -21,6 +21,7 @@ public class WPTemp extends SpiderApp {
 
     protected static final String EXTRACT_ITEM = ".extractItem";
     protected static final String EXTRACT_INFO = ".extractInfo";
+    protected static final String EXTRACT_INFO_1 = ".extractInfo_1";
     protected static final String TAGS = "tags";
     protected static final String THUM = "thumbnail";
     protected static final String THUMW = "thumW";
@@ -33,6 +34,7 @@ public class WPTemp extends SpiderApp {
     protected int emptyCount, dupCount;
     protected String baseUrl;
     protected String[] infoMethods;
+    protected String[] infoMethods_1;
     protected String[] itemMethods;
     protected String[] downMethods;
     protected DownloadWork.DownType downType = DownloadWork.DownType.CLIENT_POOL;
