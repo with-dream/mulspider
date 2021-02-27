@@ -1,19 +1,10 @@
 package samples.wallpaper;
 
-import com.example.core.annotation.SField;
-
+import java.io.Serializable;
 import java.util.List;
 
-public class WallPaperResultModel {
+public class WunderstockModel implements Serializable {
     private static final long serialVersionUID = 673293417482457120L;
-
-    public WallPaperResultModel(String imgWrapUrl, String imgUrl, List<String> tags, String fav, String views) {
-        this.imgWrapUrl = imgWrapUrl;
-        this.imgUrl = imgUrl;
-        this.tags = tags;
-        this.fav = fav;
-        this.views = views;
-    }
 
     public String imgWrapUrl;
     public String imgUrl;
@@ -27,9 +18,13 @@ public class WallPaperResultModel {
     public String thumbnailW;
     public String thumbnailH;
 
+    public WallPaperResultModel cover() {
+        return new WallPaperResultModel(imgWrapUrl, imgUrl, tags, fav, views);
+    }
+
     @Override
     public String toString() {
-        return "WallPaperResultModel{" +
+        return "WP10Model{" +
                 "imgWrapUrl='" + imgWrapUrl + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
                 ", tags=" + tags +

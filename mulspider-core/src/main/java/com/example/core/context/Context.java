@@ -45,7 +45,8 @@ public class Context {
         reflectInit.initAnnotation(appMap, workMap, methodList, methodShare);
         initThreadPool();
 
-        logger.info("reflectInit==>" + methodList);
+        for (Map.Entry<String, MethodReflect> entry : methodList.entrySet())
+            logger.info("reflectInit  k:{} v:{}", entry.getKey(), entry.getValue());
     }
 
     public void release() {

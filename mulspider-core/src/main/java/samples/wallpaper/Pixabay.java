@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+//需要登录 且有强验证 放弃
 @Spider(name = Pixabay.NAME, enable = false)
 public class Pixabay extends WPTemp {
     public static final String NAME = "Pixabay";

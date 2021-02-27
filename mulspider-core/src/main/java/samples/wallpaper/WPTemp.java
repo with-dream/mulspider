@@ -114,7 +114,8 @@ public class WPTemp extends SpiderApp {
         request.url = model.imgUrl;
         request.method = downMethods;
 
-        request.meta.put(Constant.DOWN_FILE, WallPaperResult.DOWN_PATH + name + File.separator + UUID.randomUUID().toString());
+        request.meta.put(Constant.DOWN_FILE, WallPaperResult.DOWN_PATH + name + "/" + UUID.randomUUID().toString()
+                + model.imgUrl.substring(model.imgUrl.lastIndexOf(".")));
         addTask(request);
     }
 }

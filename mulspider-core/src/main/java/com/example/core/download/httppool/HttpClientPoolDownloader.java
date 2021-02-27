@@ -67,8 +67,9 @@ public class HttpClientPoolDownloader extends DownloadHandle {
                     String path = file.substring(0, file.lastIndexOf("/"));
                     if (StringUtils.isNotEmpty(path)) {
                         File dir = new File(path);
-                        if (!dir.mkdirs())
-                            throw new RuntimeException("create dir failed:" + dir.getAbsolutePath());
+                        if (!dir.exists())
+                            if (!dir.mkdirs())
+                                throw new RuntimeException("create dir failed:" + dir.getAbsolutePath());
                     }
                 }
 
