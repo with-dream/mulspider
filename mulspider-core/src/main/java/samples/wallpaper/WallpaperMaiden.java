@@ -55,7 +55,7 @@ public class WallpaperMaiden extends WPTemp {
             if (StringUtils.isNotEmpty(tag))
                 request.meta.put(TAGS, tag);
             if (!thumbnails.get(urlIndex).isEmpty())
-                request.meta.put(THUM, response.request.getSite() + thumbnails.get(urlIndex));
+                request.meta.put(THUM, response.getSite() + thumbnails.get(urlIndex));
             addTask(request);
             logger.debug("request==>" + count.incrementAndGet());
             urlIndex++;
@@ -93,7 +93,7 @@ public class WallpaperMaiden extends WPTemp {
     private Result extractImage(Response response) {
         Result result = Result.make(response.request);
         WallpaperMaidenModel model = response.request.removeMeta(RESULT);
-        model.imgUrl = response.evalSingle("//div[@class='wpBig wpBigFull']/a/img/@src");
+        model.imgUrl = response.evalFirst("//div[@class='wpBig wpBigFull']/a/img/@src");
 
         WallPaperResultModel resModel = model.cover();
         result.result.put(RESULT, resModel);

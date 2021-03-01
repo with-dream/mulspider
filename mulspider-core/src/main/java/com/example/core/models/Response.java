@@ -1,11 +1,14 @@
 package com.example.core.models;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 import org.htmlcleaner.XPatherException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +40,31 @@ public class Response extends Task {
         return tagNode;
     }
 
+    public List<String> soup(String jsoup, String attr) {
+        List<String> list = new ArrayList<>();
+        Elements eles = jsoup().select(jsoup);
+        if (eles.isEmpty())
+            return list;
+        for (Element e : eles)
+            if (StringUtils.isNotEmpty(attr))
+                list.add(e.attr(attr));
+            else
+                list.add(e.text());
+        return list;
+    }
+
+    public String soupFirst(String jsoup, String attr) {
+        Elements eles = jsoup().select(jsoup);
+        if (eles.isEmpty())
+            return null;
+        for (Element e : eles)
+            if (StringUtils.isNotEmpty(attr))
+                return e.attr(attr);
+            else
+                return e.text();
+        return null;
+    }
+
     public List<String> eval(String xpath) {
         List<String> list = new ArrayList<>();
         try {
@@ -52,7 +80,7 @@ public class Response extends Task {
         return list;
     }
 
-    public String evalSingle(String xpath) {
+    public String evalFirst(String xpath) {
         try {
             Object[] res = xpath().evaluateXPath(xpath);
             if (ArrayUtils.isEmpty(res))
@@ -63,6 +91,10 @@ public class Response extends Task {
         }
 
         return null;
+    }
+
+    public String getSite() {
+        return request.getSite();
     }
 
     public static Response make(Request request, int resCode) {

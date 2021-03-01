@@ -41,7 +41,7 @@ public class Wallpaperfx extends WPTemp {
 
         for (String url : urls) {
             Request request = new Request(name);
-            request.url = response.request.getSite() + url;
+            request.url = response.getSite() + url;
             request.method = infoMethods;
 
             addTask(request);
@@ -72,7 +72,7 @@ public class Wallpaperfx extends WPTemp {
 
         List<String> tmpUrls = response.eval("//ul[@class='wallpaper-resolutions']/li/a/@href");
 
-        String imgUrl = response.request.getSite() + tmpUrls.get(resIndex);
+        String imgUrl = response.getSite() + tmpUrls.get(resIndex);
         Request req = response.request.clone();
         req.url = imgUrl;
         req.method = new String[]{NAME + EXTRACT_INFO_1};
@@ -88,7 +88,7 @@ public class Wallpaperfx extends WPTemp {
         result.request.method = new String[]{WallPaperResult.WallPaperResult};
 
         WallpaperfxModel model = response.request.removeMeta(RESULT);
-        model.imgUrl = response.request.getSite() + response.evalSingle("//*[@id=\"wallpaper\"]/@src");
+        model.imgUrl = response.getSite() + response.evalFirst("//*[@id=\"wallpaper\"]/@src");
 
         WallPaperResultModel resModel = model.cover();
         result.result.put(RESULT, resModel);

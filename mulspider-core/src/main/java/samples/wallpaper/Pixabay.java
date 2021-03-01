@@ -49,7 +49,7 @@ public class Pixabay extends WPTemp {
         int urlIndex = 0;
         for (String url : urls) {
             Request request = new Request(name);
-            request.url = response.request.getSite() + url;
+            request.url = response.getSite() + url;
             request.method = infoMethods;
 
             if (!thumbnails.get(urlIndex).isEmpty())
@@ -71,7 +71,7 @@ public class Pixabay extends WPTemp {
         WP10Model model = ExtractUtils.extract(response, WP10Model.class);
         model.imgWrapUrl = response.request.url;
 
-        model.imgUrl = response.request.getSite() + model.imgUrl;
+        model.imgUrl = response.getSite() + model.imgUrl;
         String[] wh = model.imgW.split("x");
         model.imgW = wh[0];
         model.imgH = wh[1];

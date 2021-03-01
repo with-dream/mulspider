@@ -45,11 +45,11 @@ public class Alphacoders extends WPTemp {
         int urlIndex = 0;
         for (String url : urls) {
             Request request = new Request(name);
-            request.url = response.request.getSite() + "/" + url;
+            request.url = response.getSite() + "/" + url;
             request.method = infoMethods;
 
             if (!thumbnails.get(urlIndex).isEmpty())
-                request.meta.put(THUM, response.request.getSite() + thumbnails.get(urlIndex));
+                request.meta.put(THUM, response.getSite() + thumbnails.get(urlIndex));
             addTask(request);
             logger.debug("request==>" + count.incrementAndGet());
             urlIndex++;

@@ -47,7 +47,7 @@ public class Wallpaperswide extends WPTemp {
         int urlIndex = 0;
         for (String url : urls) {
             Request request = new Request(name);
-            request.url = response.request.getSite() + url;
+            request.url = response.getSite() + url;
             request.method = infoMethods;
             request.put("info", infos.get(urlIndex));
 
@@ -80,7 +80,7 @@ public class Wallpaperswide extends WPTemp {
         }
         List<String> resUrls = response.eval("//*[@id=\"wallpaper-resolutions\"]/a/@href");
 
-        model.imgUrl = response.request.getSite() + resUrls.get(maxIndex);
+        model.imgUrl = response.getSite() + resUrls.get(maxIndex);
         String info = response.request.removeMeta("info");
         if (StringUtils.isNotEmpty(info) && info.contains("|")) {
             String[] views = info.split("|");

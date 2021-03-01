@@ -58,7 +58,7 @@ public class Desktopwallpapers extends WPTemp {
             request.method = infoMethods;
 
             if (!thumbnails.get(urlIndex).isEmpty())
-                request.meta.put(THUM, response.request.getSite() + thumbnails.get(urlIndex));
+                request.meta.put(THUM, response.getSite() + thumbnails.get(urlIndex));
             addTask(request);
             logger.debug("request==>" + count.incrementAndGet());
             urlIndex++;
@@ -72,7 +72,7 @@ public class Desktopwallpapers extends WPTemp {
         DesktopwallpaperModel model = ExtractUtils.extract(response, DesktopwallpaperModel.class);
         model.imgWrapUrl = response.request.url;
 
-        model.imgUrl = response.request.getSite() + model.imgUrl;
+        model.imgUrl = response.getSite() + model.imgUrl;
         if (StringUtils.isNotEmpty(model.views)) {
             model.views = model.views.split(":")[1];
             if (StringUtils.isNotEmpty(model.views))

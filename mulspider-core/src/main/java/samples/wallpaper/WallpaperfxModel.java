@@ -25,7 +25,7 @@ public class WallpaperfxModel implements Serializable {
 
     @Override
     public String toString() {
-        return "WallpaperfxModel{" +
+        return this.getClass().getSimpleName() + "{" +
                 "imgWrapUrl='" + imgWrapUrl + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
                 ", tags=" + tags +

@@ -69,7 +69,7 @@ public class Wunderstock extends WPTempCate {
             WunderstockModel model = new WunderstockModel();
             JsonObject photo = photos.get(i).getAsJsonObject();
             String id = photo.get("id").getAsString();
-            if (duplicate(response.request.getSite() + "/" + id, false))
+            if (duplicate(response.getSite() + "/" + id, false))
                 continue;
 
             imgSign.add(id);

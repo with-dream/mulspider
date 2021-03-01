@@ -23,7 +23,7 @@ public class WallpaperswideModel implements Serializable {
 
     @Override
     public String toString() {
-        return "WallpaperswideModel{" +
+        return this.getClass().getSimpleName() + "{" +
                 "imgWrapUrl='" + imgWrapUrl + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
                 ", tags=" + tags +

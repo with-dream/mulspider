@@ -29,7 +29,7 @@ public class WallpaperimModel implements Serializable {
 
     @Override
     public String toString() {
-        return "WP10Model{" +
+        return this.getClass().getSimpleName() + "{" +
                 "imgWrapUrl='" + imgWrapUrl + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
                 ", tags=" + tags +

@@ -58,13 +58,13 @@ public class WPTempCate extends WPTemp {
     protected void addRequest(Response response, String url) {
         Request request = response.request.clone();
         request.method = infoMethods;
-        request.url = response.request.getSite() + url;
+        request.url = response.getSite() + url;
         addTask(request);
     }
 
     protected boolean dupUrls(Response response, List<String> urls, boolean site, boolean separator, boolean save) {
         String cate = response.request.getMeta(CATE);
-        if (dupList(site ? response.request.getSite() : "", urls, separator, save) != 0) {
+        if (dupList((site ? response.getSite() : "") + (separator ? "/" : ""), urls, save) != 0) {
             indexMap.get(DUP + response.request.getMeta(CATE)).set(0);
             AtomicInteger integer = indexMap.get(cate);
             if (Constant.DEBUG && integer.get() > 3)

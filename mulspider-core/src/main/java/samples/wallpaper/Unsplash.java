@@ -65,7 +65,7 @@ public class Unsplash extends WPTempCate {
             UnsplashModel model = new UnsplashModel();
             JsonObject photo = photos.get(i).getAsJsonObject();
             String id = photo.get("id").getAsString();
-            if (duplicate(response.request.getSite() + "/" + id, false))
+            if (duplicate(response.getSite() + "/" + id, false))
                 continue;
 
             imgSign.add(id);

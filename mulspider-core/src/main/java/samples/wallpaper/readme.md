@@ -1,14 +1,9 @@
 - https://www.zhihu.com/search?type=content&q=壁纸网站
-- https://papers.co/ 
-- https://konachan.net/post 有png的大图
 - https://www.pexels.com/zh-cn/leaderboard/ 质量参差不齐 根据排行榜选 
 - https://www.pexels.com/zh-cn/discover/ 
 - https://www.eso.org/public/images/ 星空 
-- https://alphacoders.com/ 
-- https://unsplash.com/t 
 - https://pixabay.com/zh/illustrations/search/ 照片、插画 
 - https://www.3gbizhi.com/ 
-- https://www.wallpapermaiden.com/popular 
 - -- https://www.foodiesfeed.com/ 美食照片 
 - https://f01.co/wallpaper/ 
 - https://www.acg-pixiv.com/index.html 插画 
@@ -20,6 +15,4 @@
 
 
 
-https://pickywallpapers.com/
-http://www.brodyaga.com/
-https://www.socwall.com/
+

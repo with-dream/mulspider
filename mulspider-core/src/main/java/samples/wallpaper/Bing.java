@@ -51,7 +51,7 @@ public class Bing extends WPTemp {
         int urlIndex = 0;
         for (String url : urls) {
             Request request = new Request(name);
-            request.url = response.request.getSite() + url;
+            request.url = response.getSite() + url;
             request.method = infoMethods;
 
             String tag = tags.get(urlIndex);

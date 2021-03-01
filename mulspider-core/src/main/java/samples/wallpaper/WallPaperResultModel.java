@@ -7,6 +7,9 @@ import java.util.List;
 public class WallPaperResultModel {
     private static final long serialVersionUID = 673293417482457120L;
 
+    public WallPaperResultModel() {
+    }
+
     public WallPaperResultModel(String imgWrapUrl, String imgUrl, List<String> tags, String fav, String views) {
         this.imgWrapUrl = imgWrapUrl;
         this.imgUrl = imgUrl;
@@ -29,7 +32,7 @@ public class WallPaperResultModel {
 
     @Override
     public String toString() {
-        return "WallPaperResultModel{" +
+        return this.getClass().getSimpleName() + "{" +
                 "imgWrapUrl='" + imgWrapUrl + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
                 ", tags=" + tags +

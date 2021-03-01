@@ -91,14 +91,14 @@ public class SpiderApp {
     /**
      * return not duplicate count
      */
-    public int dupList(List<String> items, boolean separator, boolean save) {
-        return dupList("", items, separator, save);
+    public int dupList(List<String> items, boolean save) {
+        return dupList("", items, save);
     }
 
-    public int dupList(String prefix, List<String> items, boolean separator, boolean save) {
+    public int dupList(String prefix, List<String> items, boolean save) {
         int count = 0;
         for (Object str : items) {
-            if (!duplicate(prefix + (separator ? "/" : "") + str.toString(), save))
+            if (!duplicate(prefix  + str.toString(), save))
                 count++;
         }
 

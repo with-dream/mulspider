@@ -70,7 +70,7 @@ public class Wallpaperim extends WPTempCate {
         response.request.method = new String[]{WallPaperResult.WallPaperResult};
         Result result = Result.make(response.request);
         WallpaperimModel model = ExtractUtils.extract(response, WallpaperimModel.class);
-        model.imgUrl = response.request.getSite() + model.imgUrl.substring(model.imgUrl.lastIndexOf("../") + 2);
+        model.imgUrl = response.getSite() + model.imgUrl.substring(model.imgUrl.lastIndexOf("../") + 2);
         model.imgUrl = model.imgUrl.replace("amp;", "");
         model.imgWrapUrl = response.request.url;
 
