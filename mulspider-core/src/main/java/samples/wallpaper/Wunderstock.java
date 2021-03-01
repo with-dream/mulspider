@@ -89,7 +89,7 @@ public class Wunderstock extends WPTempCate {
 
             list.add(resModel);
         }
-        result.put(RESULTS, list);
+        result.put(RESULT_LIST, list);
 
         dupUrls(response, imgSign, true, true, true);
 

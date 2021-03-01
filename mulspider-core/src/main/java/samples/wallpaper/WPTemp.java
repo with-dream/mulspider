@@ -27,7 +27,7 @@ public class WPTemp extends SpiderApp {
     protected static final String THUMW = "thumW";
     protected static final String THUMH = "thumH";
     protected static final String RESULT = "result";
-    protected static final String RESULTS = "results";
+    protected static final String RESULT_LIST = "result_list";
 
     protected AtomicInteger index = new AtomicInteger(1);
     protected AtomicInteger count = new AtomicInteger(0);

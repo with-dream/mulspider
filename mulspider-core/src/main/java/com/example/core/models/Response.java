@@ -1,5 +1,7 @@
 package com.example.core.models;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.htmlcleaner.HtmlCleaner;
@@ -22,6 +24,7 @@ public class Response extends Task {
     public String resCharset;
     private transient Document document;
     private transient TagNode tagNode;
+    private transient JsonElement jsonElement;
 
     public int resCode;
     public String resMsg;
@@ -38,6 +41,12 @@ public class Response extends Task {
             tagNode = hc.clean(body);
         }
         return tagNode;
+    }
+
+    public JsonElement gson() {
+        if (jsonElement == null)
+            jsonElement = JsonParser.parseString(body);
+        return jsonElement;
     }
 
     public List<String> soup(String jsoup, String attr) {

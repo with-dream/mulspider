@@ -60,7 +60,7 @@ public class Unsplash extends WPTempCate {
 
         List<WallPaperResultModel> list = new ArrayList<>();
         List<String> imgSign = new ArrayList<>();
-        JsonArray photos = JsonParser.parseString(response.body).getAsJsonArray();
+        JsonArray photos = response.gson().getAsJsonArray();
         for (int i = 0; i < photos.size(); i++) {
             UnsplashModel model = new UnsplashModel();
             JsonObject photo = photos.get(i).getAsJsonObject();
@@ -86,7 +86,7 @@ public class Unsplash extends WPTempCate {
 
             list.add(resModel);
         }
-        result.put(RESULTS, list);
+        result.put(RESULT_LIST, list);
 
         dupUrls(response, imgSign, true, true, true);
 
