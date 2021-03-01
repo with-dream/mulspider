@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-@Spider(name = F01.NAME, enable = true)
+@Spider(name = F01.NAME, enable = false)
 public class F01 extends WPTemp {
     public static final String NAME = "F01";
     private static final int PAGE_COUNT = 30;
@@ -68,12 +68,14 @@ public class F01 extends WPTemp {
 
             WallPaperResultModel resModel = model.cover();
             results.add(resModel);
-            downFile(resModel);
         }
 
         Result resTmp;
         if ((resTmp = duplicate(response, urls, false)) != null)
             return resTmp;
+
+        for (WallPaperResultModel res : results)
+            downFile(res);
 
         result.result.put(RESULT_LIST, results);
         return result;
