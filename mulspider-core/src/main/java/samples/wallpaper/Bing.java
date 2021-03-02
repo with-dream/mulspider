@@ -21,7 +21,7 @@ public class Bing extends WPTemp {
 
     public Bing() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://bing.ioliu.cn/?p=";
+        baseUrl = "https://bing.ioliu.cn/?p=%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }

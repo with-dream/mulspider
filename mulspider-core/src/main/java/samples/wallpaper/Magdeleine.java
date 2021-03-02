@@ -19,7 +19,7 @@ public class Magdeleine extends WPTemp {
 
     public Magdeleine() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://magdeleine.co/browse/page/";
+        baseUrl = "https://magdeleine.co/browse/page/%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }

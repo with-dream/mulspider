@@ -38,11 +38,6 @@ public class Brodyaga extends WPTemp {
         return config;
     }
 
-    @Override
-    protected String getUrl() {
-        return String.format(baseUrl, index.getAndIncrement());
-    }
-
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
         List<String> urls = response.eval("//tbody/tr/td/a[@target='_blank']/@href");

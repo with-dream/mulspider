@@ -21,7 +21,7 @@ public class Desktopwallpapers extends WPTemp {
 
     public Desktopwallpapers() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "http://desktopwallpapers.org.ua/page/";
+        baseUrl = "http://desktopwallpapers.org.ua/page/%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
         headers = new HashMap<>();

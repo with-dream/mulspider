@@ -20,7 +20,7 @@ public class WallpaperMaiden extends WPTemp {
 
     public WallpaperMaiden() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://www.wallpapermaiden.com/?page=";
+        baseUrl = "https://www.wallpapermaiden.com/?page=%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }

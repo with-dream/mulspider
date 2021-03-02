@@ -19,7 +19,7 @@ public class Wallpaperfx extends WPTemp {
 
     public Wallpaperfx() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://wallpaperfx.com/latest_wallpapers/page-";
+        baseUrl = "https://wallpaperfx.com/latest_wallpapers/page-%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }

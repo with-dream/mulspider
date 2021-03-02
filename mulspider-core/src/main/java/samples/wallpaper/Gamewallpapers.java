@@ -3,29 +3,27 @@ package samples.wallpaper;
 import com.example.core.annotation.ExtractMethod;
 import com.example.core.annotation.Spider;
 import com.example.core.context.Config;
-import com.example.core.extract.ExtractUtils;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * 有水印 放弃
+ * 有水印 草
  * */
-@Spider(name = Cgwallpapers.NAME, enable = false)
-public class Cgwallpapers extends WPTemp {
-    public static final String NAME = "Cgwallpapers";
+@Spider(name = Gamewallpapers.NAME, enable = false)
+public class Gamewallpapers extends WPTemp {
+    public static final String NAME = "Gamewallpapers";
     private static final int PAGE_COUNT = 36;
 
-    public Cgwallpapers() {
+    public Gamewallpapers() {
         index.set(0);
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://www.cgwallpapers.com/index.php?start=%d";
+        baseUrl = "https://www.gamewallpapers.com/index.php?start=%d&page=";
         infoMethods = new String[]{NAME + EXTRACT_INFO};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
         infoMethods_1 = new String[]{NAME + EXTRACT_INFO_1, WallPaperResult.WallPaperResult};

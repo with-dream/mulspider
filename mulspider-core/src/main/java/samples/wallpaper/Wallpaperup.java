@@ -16,11 +16,11 @@ import java.util.List;
 @Spider(name = Wallpaperup.NAME, enable = false)
 public class Wallpaperup extends WPTemp {
     public static final String NAME = "Wallpaperup";
-    private static final String urlEnd = "/date_added/desc";
+    private static final String urlEnd = "";
 
     public Wallpaperup() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://www.wallpaperup.com/latest/";
+        baseUrl = "https://www.wallpaperup.com/latest/%d/date_added/desc";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }
@@ -30,11 +30,6 @@ public class Wallpaperup extends WPTemp {
         config.downThreadCount = 1;
         config.breakpoint = true;
         return config;
-    }
-
-    @Override
-    protected String getUrl() {
-        return baseUrl + index.decrementAndGet() + urlEnd;
     }
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})

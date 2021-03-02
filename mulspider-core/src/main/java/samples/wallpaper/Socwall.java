@@ -34,11 +34,6 @@ public class Socwall extends WPTemp {
         return config;
     }
 
-    @Override
-    protected String getUrl() {
-        return String.format(baseUrl, index.getAndIncrement());
-    }
-
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
         List<String> urls = response.eval("//*[@id=\"content\"]/ul[1]/li/div/a/@href");

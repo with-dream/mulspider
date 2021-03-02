@@ -18,7 +18,7 @@ public class Wallpaperswide extends WPTemp {
 
     public Wallpaperswide() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "http://wallpaperswide.com/latest_wallpapers/page/";
+        baseUrl = "http://wallpaperswide.com/latest_wallpapers/page/%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }

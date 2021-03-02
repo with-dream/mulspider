@@ -1,17 +1,14 @@
 package samples.wallpaper;
 
-import com.example.core.context.Config;
 import com.example.core.context.SpiderApp;
 import com.example.core.download.DownloadWork;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
-import com.example.core.utils.CollectionUtils;
 import com.example.core.utils.Constant;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +26,7 @@ public class WPTemp extends SpiderApp {
     protected static final String THUMH = "thumH";
     protected static final String RESULT = "result";
     protected static final String RESULT_LIST = "result_list";
+    protected static final String JPG = ".jpg";
 
     protected AtomicInteger index = new AtomicInteger(1);
     protected AtomicInteger count = new AtomicInteger(0);
@@ -113,7 +111,7 @@ public class WPTemp extends SpiderApp {
     }
 
     protected String getUrl() {
-        return baseUrl + index.getAndIncrement();
+        return String.format(baseUrl, index.getAndIncrement());
     }
 
     protected void downFile(WallPaperResultModel model, String suffix) {

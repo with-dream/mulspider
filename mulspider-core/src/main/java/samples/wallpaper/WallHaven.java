@@ -18,7 +18,7 @@ public class WallHaven extends WPTemp {
 
     public WallHaven() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://wallhaven.cc/latest?page=";
+        baseUrl = "https://wallhaven.cc/latest?page=%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
         downType = DownloadWork.DownType.CLIENT_POOL;

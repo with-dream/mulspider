@@ -19,7 +19,7 @@ public class WP10 extends WPTemp {
 
     public WP10() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://10wallpaper.com/List_wallpapers/page/";
+        baseUrl = "https://10wallpaper.com/List_wallpapers/page/%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }
@@ -92,12 +92,12 @@ public class WP10 extends WPTemp {
             }
         }
         model.imgUrl = response.getSite() + model.imgUrl;
-        String[] wh = model.imgW.split("x");
-        model.imgW = wh[0];
-        model.imgH = wh[1];
-        model.thumbnail = response.request.removeMeta(THUM);
-        model.thumbnailW = "400";
-        model.thumbnailH = "225";
+//        String[] wh = model.imgW.split("x");
+//        model.imgW = wh[0];
+//        model.imgH = wh[1];
+//        model.thumbnail = response.request.removeMeta(THUM);
+//        model.thumbnailW = "400";
+//        model.thumbnailH = "225";
 
         WallPaperResultModel resModel = model.cover();
         result.result.put(RESULT, resModel);

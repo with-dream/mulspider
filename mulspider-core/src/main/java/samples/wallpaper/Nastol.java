@@ -18,7 +18,7 @@ public class Nastol extends WPTemp {
 
     public Nastol() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://www.nastol.com.ua/page/";
+        baseUrl = "https://www.nastol.com.ua/page/%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }
