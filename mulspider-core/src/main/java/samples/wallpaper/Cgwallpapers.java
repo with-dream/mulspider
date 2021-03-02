@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Spider(name = Cgwallpapers.NAME, enable = true)
+@Spider(name = Cgwallpapers.NAME, enable = false)
 public class Cgwallpapers extends WPTemp {
     public static final String NAME = "Cgwallpapers";
     private static final int PAGE_COUNT = 36;
@@ -22,8 +22,9 @@ public class Cgwallpapers extends WPTemp {
     public Cgwallpapers() {
         logger = LoggerFactory.getLogger(this.getClass());
         baseUrl = "https://www.cgwallpapers.com/index.php?start=%d";
-        infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
+        infoMethods = new String[]{NAME + EXTRACT_INFO};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
+        infoMethods_1 = new String[]{NAME + EXTRACT_INFO_1, WallPaperResult.WallPaperResult};
     }
 
     @Override
@@ -68,17 +69,32 @@ public class Cgwallpapers extends WPTemp {
 
     @ExtractMethod(methods = {NAME + EXTRACT_INFO})
     private Result extractInfo(Response response) {
-        Result result = Result.make(response.request);
-        CgwallpapersModel model = ExtractUtils.extract(response, CgwallpapersModel.class);
-        model.imgWrapUrl = response.request.url;
-        //TODO
-        model.tags = Arrays.asList(response.removeMeta(TAGS));
+        List<String> urls = response.soup("#thumbnails-left-container > div > a.zoom4", "href");
 
-        model.imgUrl = response.getSite() + model.imgUrl;
+        for (String url : urls) {
+            Request request = response.request.clone();
+            request.url = response.getSite() + "/" + url;
+            request.method = infoMethods_1;
+            addTask(request);
+        }
+
+        return Result.makeIgnore();
+    }
+
+    @ExtractMethod(methods = {NAME + EXTRACT_INFO_1})
+    private Result extractInfo1(Response response) {
+        Result result = Result.make(response.request);
+        CgwallpapersModel model = new CgwallpapersModel();
+        model.imgWrapUrl = response.request.url;
+        String tag = response.request.removeMeta(TAGS);
+        if (StringUtils.isNotEmpty(tag))
+            model.tags = Arrays.asList(tag.split(","));
+
+        model.imgUrl = response.soupFirst("body > center > img", "src");
 
         WallPaperResultModel resModel = model.cover();
-        result.result.put(RESULT, resModel);
-        downFile(resModel);
+        result.put(RESULT, resModel);
+        downFile(resModel, ".jpg");
 
         logger.debug("result==>" + count.decrementAndGet());
 

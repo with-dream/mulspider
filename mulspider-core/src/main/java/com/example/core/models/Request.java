@@ -34,7 +34,7 @@ public class Request extends Task {
     public String name;
     public String url;
     public String[] method;
-    private String site;
+    private transient String site;
     public String reqCharset = "utf-8";
     public String reqType;
     public Map<String, String> headers;

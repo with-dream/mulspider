@@ -8,6 +8,7 @@ import com.example.core.models.Response;
 import com.example.core.models.Result;
 import com.example.core.utils.CollectionUtils;
 import com.example.core.utils.Constant;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -115,13 +116,20 @@ public class WPTemp extends SpiderApp {
         return baseUrl + index.getAndIncrement();
     }
 
-    protected void downFile(WallPaperResultModel model) {
+    protected void downFile(WallPaperResultModel model, String suffix) {
         Request request = new Request(name);
         request.url = model.imgUrl;
         request.method = downMethods;
 
+        String imgSuffix = suffix;
+        if (StringUtils.isEmpty(imgSuffix))
+            imgSuffix = model.imgUrl.substring(model.imgUrl.lastIndexOf("."));
         request.meta.put(Constant.DOWN_FILE, WallPaperResult.DOWN_PATH + name + "/" + UUID.randomUUID().toString()
-                + model.imgUrl.substring(model.imgUrl.lastIndexOf(".")));
+                + imgSuffix);
         addTask(request);
+    }
+
+    protected void downFile(WallPaperResultModel model) {
+        downFile(model, null);
     }
 }
