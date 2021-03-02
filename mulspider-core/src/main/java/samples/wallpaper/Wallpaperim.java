@@ -58,7 +58,10 @@ public class Wallpaperim extends WPTempCate {
 
         if (dupUrls(response, urls, true, false, false)) {
             for (String url : urls) {
-                addRequest(response, url);
+                Request request = response.request.clone();
+                request.method = infoMethods;
+                request.url = response.getSite() + url;
+                addTask(request);
             }
         }
 

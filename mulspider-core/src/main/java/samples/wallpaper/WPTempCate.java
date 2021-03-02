@@ -1,12 +1,8 @@
 package samples.wallpaper;
 
-import com.example.core.context.SpiderApp;
-import com.example.core.download.DownloadWork;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
-import com.example.core.models.Result;
 import com.example.core.utils.Constant;
-import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,13 +49,6 @@ public class WPTempCate extends WPTemp {
 
     protected String getCateUrl(String cate, int index) {
         return null;
-    }
-
-    protected void addRequest(Response response, String url) {
-        Request request = response.request.clone();
-        request.method = infoMethods;
-        request.url = response.getSite() + url;
-        addTask(request);
     }
 
     protected boolean dupUrls(Response response, List<String> urls, boolean site, boolean separator, boolean save) {
