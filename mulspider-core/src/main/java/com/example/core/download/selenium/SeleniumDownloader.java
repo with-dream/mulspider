@@ -5,6 +5,7 @@ import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.download.DownloadHandle;
 import com.example.core.utils.CharsetUtils;
+import com.example.core.utils.CollectionUtils;
 import com.example.core.utils.ThreadUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -21,8 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class SeleniumDownloader extends DownloadHandle {
@@ -96,9 +96,9 @@ public class SeleniumDownloader extends DownloadHandle {
         Response response = null;
         WebDriver webDriver = createDriver(request);
         try {
-            webDriver.manage().timeouts().implicitlyWait(request.timeOut * 3, TimeUnit.SECONDS);
+            webDriver.manage().timeouts().implicitlyWait(request.timeOut * 3L, TimeUnit.SECONDS);
             WebDriver.Options manage = webDriver.manage();
-            manage.getCookies().clear();
+            manage.deleteAllCookies();
             if (request.cookie != null) {
                 for (Map.Entry<String, String> cookieEntry : request.cookie
                         .entrySet()) {
@@ -118,6 +118,15 @@ public class SeleniumDownloader extends DownloadHandle {
             response = Response.make(request, body, 200);
             if (response.resCharset == null)
                 response.resCharset = CharsetUtils.guessEncoding(body.getBytes());
+
+            if (request.responseCookie) {
+                Set<Cookie> cookieSet = webDriver.manage().getCookies();
+                if (!cookieSet.isEmpty()) {
+                    response.cookie = new HashMap<>();
+                    for (Cookie cookie : cookieSet)
+                        response.cookie.put(cookie.getName(), cookie.getValue());
+                }
+            }
 
             int delay = request.delayTime;
             if (delay == 0)

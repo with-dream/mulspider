@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Spider(name = Tt98.NAME, enable = true)
+@Spider(name = Tt98.NAME, enable = false)
 public class Tt98 extends WPTempCate {
     public static final String NAME = "Tt98";
     private String[] cates = {"desk", "ipad", "phone"};
@@ -21,6 +21,7 @@ public class Tt98 extends WPTempCate {
     public Tt98() {
         logger = LoggerFactory.getLogger(this.getClass());
         baseUrl = "https://www.tt98.com/list-%s-0-0-0-0-%d.html";
+        cateMethods = new String[]{NAME + EXTRACT_CATE};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
         infoMethods = new String[]{NAME + EXTRACT_INFO};
         infoMethods_1 = new String[]{NAME + EXTRACT_INFO_1, WallPaperResult.WallPaperResult};
@@ -35,45 +36,49 @@ public class Tt98 extends WPTempCate {
     }
 
     @Override
-    public void init() {
-
-        for (int i = 0; i < cates.length; i++) {
-            int index = initCateIndex(cates[i]);
-
+    protected void initUrl() {
+        for (int i = 0; i < cateType.length; i++) {
+            if (i != 1)
+                continue;
+            int index = initCateIndex(cateType[i]);
+            createCateReq(cateType[i], getCateUrl(cateType[i], index));
         }
+    }
+
+    @Override
+    protected String getCateUrl(String cate, int index) {
+        return String.format(baseUrl, cate, index);
     }
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
-        List<String> urls = response.soup("dl.egeli_pic_dl > dd > a", "href");
+        List<String> urls = response.soup("li > div.listbox > a", "href");
 
-        Result resTmp;
-        if ((resTmp = duplicate(response, urls, false)) != null)
-            return resTmp;
-
-        for (String url : urls) {
-            Request request = new Request(name);
-            request.url = url;
-            request.httpPool();
-            request.method = infoMethods;
-            addTask(request);
-            logger.debug("request==>" + count.incrementAndGet());
+        if (dupUrls(response, urls, true, false, false)) {
+            for (String url : urls) {
+                Request request = new Request(name);
+                request.url = response.getSite() + url;
+                request.httpPool();
+                request.method = infoMethods;
+                if (addTask(request))
+                    logger.debug("request==>" + count.incrementAndGet());
+            }
         }
         return Result.makeIgnore();
     }
 
     @ExtractMethod(methods = {NAME + EXTRACT_INFO})
     private Result extractInfo(Response response) {
-        EnterdeskModel model = ExtractUtils.extract(response, EnterdeskModel.class);
-        model.imgWrapUrl = response.request.url;
+        String count = response.soupFirst("a.photo-a", "zong");
+        String urls = response.soupFirst("div.page > a[href]", "href");
 
-        String url = "https:" + model.imgUrl;
-        Request request = response.request;
-        request.reset();
-        request.put(RESULT, model);
-        request.url = url;
-        request.method = infoMethods_1;
-        addTask(request);
+        for (int i = 0; i < Integer.parseInt(count); i++) {
+            String url = urls.replaceAll("-\\d+\\.html", "-" + i + ".html");
+            Request request = response.request.clone();
+            request.url = response.getSite() + url;
+            request.method = infoMethods_1;
+            addTask(request);
+        }
 
         return Result.makeIgnore();
     }
@@ -81,8 +86,10 @@ public class Tt98 extends WPTempCate {
     @ExtractMethod(methods = {NAME + EXTRACT_INFO_1})
     private Result extractInfo1(Response response) {
         Result result = Result.make(response.request);
-        EnterdeskModel model = response.request.removeMeta(RESULT);
-        model.imgUrl = response.soupFirst("#images_show_downa", "href");
+        String ff = response.soupFirst("#diggnum", null);
+        Tt98Model model = ExtractUtils.extract(response, Tt98Model.class);
+        model.imgWrapUrl = response.request.url;
+        model.imgUrl = model.imgUrl.replace("edpic", "edpic_source");
 
         WallPaperResultModel resModel = model.cover();
         result.result.put(RESULT, resModel);

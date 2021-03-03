@@ -62,12 +62,12 @@ public class HttpClientPool {
         return SingletonClassInstance.instance;
     }
 
-    private final Map<String, CloseableHttpClient> httpClients = new HashMap<>();
+    private final Map<String, HttpClientModel> httpClients = new HashMap<>();
 
     private PoolingHttpClientConnectionManager connectionManager;
 
-    public CloseableHttpClient getHttpClient(Request request) {
-        CloseableHttpClient httpClient = httpClients.get(request.getSite());
+    public HttpClientModel getHttpClient(Request request) {
+        HttpClientModel httpClient = httpClients.get(request.getSite());
         if (httpClient == null) {
             synchronized (this) {
                 httpClient = httpClients.get(request.getSite());
@@ -77,10 +77,12 @@ public class HttpClientPool {
                 }
             }
         }
+
+        httpClient.cookieStore.clear();
         return httpClient;
     }
 
-    private CloseableHttpClient createClient(Request request) {
+    private HttpClientModel createClient(Request request) {
         HttpClientBuilder httpClientBuilder = HttpClients.custom();
         httpClientBuilder.setConnectionManager(connectionManager);
         httpClientBuilder.setUserAgent(StringUtils.isEmpty(request.userAgent) ? "" : request.userAgent);
@@ -94,22 +96,17 @@ public class HttpClientPool {
         httpClientBuilder.setDefaultSocketConfig(socketConfig);
         connectionManager.setDefaultSocketConfig(socketConfig);
         httpClientBuilder.setRetryHandler(new DefaultHttpRequestRetryHandler(request.retryCount, true));
-        generateCookie(httpClientBuilder, request);
-        return httpClientBuilder.build();
+
+        HttpClientModel model = new HttpClientModel();
+        model.cookieStore = generateCookie(httpClientBuilder, request);
+        model.client = httpClientBuilder.build();
+        return model;
     }
 
-    private void generateCookie(HttpClientBuilder httpClientBuilder, Request request) {
-        if (request.cookie == null || request.cookie.isEmpty()) {
-            httpClientBuilder.disableCookieManagement();
-            return;
-        }
+    private CookieStore generateCookie(HttpClientBuilder httpClientBuilder, Request request) {
         CookieStore cookieStore = new BasicCookieStore();
-        for (Map.Entry<String, String> cookieEntry : request.cookie.entrySet()) {
-            BasicClientCookie cookie = new BasicClientCookie(cookieEntry.getKey(), cookieEntry.getValue());
-            cookie.setDomain(request.getSite());
-            cookieStore.addCookie(cookie);
-        }
         httpClientBuilder.setDefaultCookieStore(cookieStore);
+        return cookieStore;
     }
 
     private SSLConnectionSocketFactory buildSSLConnectionSocketFactory() {

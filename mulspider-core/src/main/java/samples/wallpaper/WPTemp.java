@@ -1,11 +1,14 @@
 package samples.wallpaper;
 
+import com.example.core.annotation.ExtractMethod;
 import com.example.core.context.SpiderApp;
 import com.example.core.download.DownloadWork;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
+import com.example.core.utils.CollectionUtils;
 import com.example.core.utils.Constant;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -18,6 +21,7 @@ public class WPTemp extends SpiderApp {
     protected Logger logger;
 
     protected static final String EXTRACT_ITEM = ".extractItem";
+    protected static final String PRE_ITEM = "preItem";
     protected static final String EXTRACT_INFO = ".extractInfo";
     protected static final String EXTRACT_INFO_1 = ".extractInfo_1";
     protected static final String TAGS = "tags";
@@ -31,16 +35,28 @@ public class WPTemp extends SpiderApp {
     protected AtomicInteger index = new AtomicInteger(1);
     protected AtomicInteger count = new AtomicInteger(0);
     protected int emptyCount, dupCount;
-    protected String baseUrl;
+    protected boolean preReq;
+    protected String baseUrl, preUrl;
     protected String[] infoMethods;
     protected String[] infoMethods_1;
     protected String[] itemMethods;
     protected String[] downMethods;
+    private String[] preMethods = new String[]{PRE_ITEM};
+
     protected DownloadWork.DownType downType = DownloadWork.DownType.CLIENT_POOL;
+    protected boolean responseCookie;
     protected Map<String, String> headers;
 
     @Override
     public void init() {
+        if (preReq) {
+            initRequest(preUrl, preMethods);
+        } else {
+            initUrl();
+        }
+    }
+
+    protected void initUrl() {
         Integer pindex = dbManager.get("pageIndex");
         if (pindex != null && pindex > 0)
             index.set(pindex);
@@ -49,12 +65,24 @@ public class WPTemp extends SpiderApp {
         initRequest(getUrl());
     }
 
+    @ExtractMethod(methods = {PRE_ITEM})
+    private Result preMethod(Response response) {
+        preReq(response);
+        initUrl();
+        return Result.makeIgnore();
+    }
+
+    protected void preReq(Response response) {
+
+    }
+
     protected void initRequest(String url, String[] mothods) {
         Request request = new Request(name);
         if (downType == DownloadWork.DownType.CLIENT_POOL)
             request.httpPool();
         else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
             request.headless();
+        request.responseCookie = responseCookie;
         request.method = mothods;
         request.url = url;
         if (headers != null && !headers.isEmpty())
@@ -115,9 +143,15 @@ public class WPTemp extends SpiderApp {
     }
 
     protected void downFile(WallPaperResultModel model, String suffix) {
+        downFile(model, suffix, null);
+    }
+
+    protected void downFile(WallPaperResultModel model, String suffix, Map<String, String> headers) {
         Request request = new Request(name);
         request.url = model.imgUrl;
         request.method = downMethods;
+        if (headers != null)
+            request.headers = headers;
 
         String imgSuffix = suffix;
         if (StringUtils.isEmpty(imgSuffix))

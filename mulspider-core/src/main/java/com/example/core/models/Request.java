@@ -42,6 +42,8 @@ public class Request extends Task {
     public ParamType paramType;
     public Map<String, String> cookie;
     public String userAgent;
+    public boolean responseHeader;
+    public boolean responseCookie;
 
     public String proxyUrl;
     public int proxyPort;

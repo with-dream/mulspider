@@ -19,7 +19,7 @@ public class WPTempCate extends WPTemp {
     protected String homeUrl;
 
     @Override
-    public void init() {
+    protected void initUrl() {
         initRequest(homeUrl, cateMethods);
     }
 
@@ -51,6 +51,9 @@ public class WPTempCate extends WPTemp {
         return null;
     }
 
+    /**
+     * @return true 有为请求的url false url全部重复
+     * */
     protected boolean dupUrls(Response response, List<String> urls, boolean site, boolean separator, boolean save) {
         String cate = response.request.getMeta(CATE);
         if (dupList((site ? response.getSite() : "") + (separator ? "/" : ""), urls, save) != 0) {

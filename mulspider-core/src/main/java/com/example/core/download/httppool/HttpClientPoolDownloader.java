@@ -4,6 +4,7 @@ import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.download.DownloadHandle;
 import com.example.core.utils.CharsetUtils;
+import com.example.core.utils.CollectionUtils;
 import com.example.core.utils.Constant;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -11,14 +12,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.*;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HttpClientPoolDownloader extends DownloadHandle {
     Logger logger = LoggerFactory.getLogger(HttpClientPoolDownloader.class);
@@ -30,10 +36,18 @@ public class HttpClientPoolDownloader extends DownloadHandle {
     @Override
     public Response down(Request request) {
         CloseableHttpResponse httpResponse = null;
-        CloseableHttpClient client = HttpClientPool.getInstance().getHttpClient(request);
+        HttpClientModel httpClient = HttpClientPool.getInstance().getHttpClient(request);
+
+        if (request.cookie != null && !request.cookie.isEmpty())
+            for (Map.Entry<String, String> cookieEntry : request.cookie.entrySet()) {
+                BasicClientCookie cookie = new BasicClientCookie(cookieEntry.getKey(), cookieEntry.getValue());
+                cookie.setDomain(request.getSite());
+                httpClient.cookieStore.addCookie(cookie);
+            }
+
         try {
-            httpResponse = client.execute(HttpClientPool.getInstance().httpUriRequest(request), HttpClientPool.getInstance().getHttpClientContext(request));
-            return handleResponse(request, httpResponse);
+            httpResponse = httpClient.client.execute(HttpClientPool.getInstance().httpUriRequest(request), HttpClientPool.getInstance().getHttpClientContext(request));
+            return handleResponse(request, httpResponse, httpClient.cookieStore);
         } catch (IOException e) {
 //            e.printStackTrace();
             if (downloadTimeout != null)
@@ -47,7 +61,7 @@ public class HttpClientPoolDownloader extends DownloadHandle {
         return null;
     }
 
-    private Response handleResponse(Request request, HttpResponse httpResponse) throws IOException {
+    private Response handleResponse(Request request, HttpResponse httpResponse, CookieStore cookieStore) throws IOException {
         Response response = Response.make(request, httpResponse.getStatusLine().getStatusCode());
 
         if (StringUtils.isEmpty(request.getMeta(Constant.DOWN_FILE))) {
@@ -101,13 +115,24 @@ public class HttpClientPoolDownloader extends DownloadHandle {
             }
         }
 
-        Header[] headers = httpResponse.getAllHeaders();
-        if (ArrayUtils.isNotEmpty(headers)) {
-            response.headers = new HashMap<>();
-            for (Header header : headers)
-                response.headers.put(header.getName().toLowerCase(), header.getValue());
+
+        if (request.responseCookie) {
+            List<Cookie> cookieList = cookieStore.getCookies();
+            if (!CollectionUtils.isEmpty(cookieList)) {
+                response.cookie = new HashMap<>();
+                for (Cookie cookie : cookieList)
+                    response.cookie.put(cookie.getName(), cookie.getValue());
+            }
         }
 
+        if (request.responseHeader) {
+            Header[] headers = httpResponse.getAllHeaders();
+            if (ArrayUtils.isNotEmpty(headers)) {
+                response.headers = new HashMap<>();
+                for (Header header : headers)
+                    response.headers.put(header.getName().toLowerCase(), header.getValue());
+            }
+        }
         return response;
     }
 }

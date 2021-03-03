@@ -20,6 +20,7 @@ public class Response extends Task {
     public Request request;
 
     public Map<String, String> headers;
+    public Map<String, String> cookie;
     public String body;
     public String resCharset;
     private transient Document document;
