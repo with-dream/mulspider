@@ -7,21 +7,27 @@ import com.example.core.extract.ExtractUtils;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
-import com.example.core.utils.CollectionUtils;
+import com.example.core.utils.Constant;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = hdwallsource.NAME, enable = false)
-public class hdwallsource extends WPTemp {
-    public static final String NAME = "hdwallsource";
+/**
+ * 下载需要cookie 卒
+ */
+@Spider(name = pakutaso.NAME, enable = false)
+public class pakutaso extends WPTempCate {
+    public static final String NAME = "pakutaso";
 
-    public hdwallsource() {
+    public pakutaso() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://hdwallsource.com/home/%d";
-        infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
+        homeUrl = "https://www.pakutaso.com/";
+        cateMethods = new String[]{NAME + EXTRACT_CATE};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
+        infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
     }
 
     @Override
@@ -31,9 +37,28 @@ public class hdwallsource extends WPTemp {
         return config;
     }
 
+    @Override
+    protected String getCateUrl(String cate, int index) {
+        return String.format("https://www.pakutaso.com%sindex_%d.html", cate, index);
+    }
+
+    @ExtractMethod(methods = {NAME + EXTRACT_CATE})
+    private Result extractCate(Response response) {
+        List<String> cates = response.eval("//div[@class='photo']/a/@href");
+
+        String prefix = ".com";
+        for (String cate : cates) {
+            if (cate.contains(prefix))
+                cate = cate.substring(cate.indexOf(prefix) + prefix.length());
+            int cateIndex = initCateIndex(cate);
+            createCateReq(cate, getCateUrl(cate, cateIndex));
+        }
+        return Result.makeIgnore();
+    }
+
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
-        List<String> urls = response.soup("div.details > a", "href");
+        List<String> urls = response.eval("//li[@class='photos__item']/div[@class='photoEntries']/a/@href");
 
         Result resTmp;
         if ((resTmp = duplicate(response, urls, false)) != null)
@@ -54,10 +79,9 @@ public class hdwallsource extends WPTemp {
     private Result extractInfo(Response response) {
         Result result = Result.make(response.request);
 
-        hdwallsourceModel model = ExtractUtils.extract(null, response.jsoup(), hdwallsourceModel.class);
+        pakutasoModel model = ExtractUtils.extract(response, pakutasoModel.class);
         model.imgWrapUrl = response.request.url;
-        if (!CollectionUtils.isEmpty(model.tags))
-            model.tags = Arrays.asList(model.tags.get(0).split(" "));
+        model.imgUrl = response.getSite() + model.imgUrl;
 
         WallPaperResultModel resModel = model.cover();
         result.put(RESULT, resModel);
@@ -67,4 +91,7 @@ public class hdwallsource extends WPTemp {
 
         return result;
     }
+
 }
+//https://www.pakutaso.com/animal/cat/index_2.html
+//https://www.pakutaso.com/animal/cat/index_1.html

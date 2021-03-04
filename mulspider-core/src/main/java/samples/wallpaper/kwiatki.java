@@ -18,8 +18,8 @@ public class kwiatki extends WPTemp {
     public kwiatki() {
         logger = LoggerFactory.getLogger(this.getClass());
         baseUrl = "https://www.kwiatki.org/kwiaty,,strona-%d.html";
-        infoMethods = new String[]{NAME + EXTRACT_INFO};
-        itemMethods = new String[]{NAME + EXTRACT_ITEM, WallPaperResult.WallPaperResult};
+        infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
+        itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }
 
     @Override

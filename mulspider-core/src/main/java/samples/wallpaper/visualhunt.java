@@ -7,19 +7,17 @@ import com.example.core.extract.ExtractUtils;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
-import com.example.core.utils.CollectionUtils;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
 
-@Spider(name = hdwallsource.NAME, enable = false)
-public class hdwallsource extends WPTemp {
-    public static final String NAME = "hdwallsource";
+@Spider(name = visualhunt.NAME, enable = false)
+public class visualhunt extends WPTemp {
+    public static final String NAME = "visualhunt";
 
-    public hdwallsource() {
+    public visualhunt() {
         logger = LoggerFactory.getLogger(this.getClass());
-        baseUrl = "https://hdwallsource.com/home/%d";
+        baseUrl = "https://visualhunt.com/popular-photos/%d";
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
     }
@@ -33,15 +31,15 @@ public class hdwallsource extends WPTemp {
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
-        List<String> urls = response.soup("div.details > a", "href");
+        List<String> urls = response.eval("//div[@class='vh-Collage-item']/a/@href");
 
         Result resTmp;
-        if ((resTmp = duplicate(response, urls, false)) != null)
+        if ((resTmp = duplicate(response, urls, true)) != null)
             return resTmp;
 
         for (String url : urls) {
             Request request = new Request(name);
-            request.url = url;
+            request.url = response.getSite() + url;
             request.method = infoMethods;
 
             if (addTask(request))
@@ -54,10 +52,9 @@ public class hdwallsource extends WPTemp {
     private Result extractInfo(Response response) {
         Result result = Result.make(response.request);
 
-        hdwallsourceModel model = ExtractUtils.extract(null, response.jsoup(), hdwallsourceModel.class);
+        visualhuntModel model = ExtractUtils.extract(response, visualhuntModel.class);
         model.imgWrapUrl = response.request.url;
-        if (!CollectionUtils.isEmpty(model.tags))
-            model.tags = Arrays.asList(model.tags.get(0).split(" "));
+        model.fav = model.fav.replace("+", "");
 
         WallPaperResultModel resModel = model.cover();
         result.put(RESULT, resModel);
@@ -67,4 +64,5 @@ public class hdwallsource extends WPTemp {
 
         return result;
     }
+
 }
