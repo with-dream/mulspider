@@ -2,30 +2,21 @@ package samples.wallpaper;
 
 import com.example.core.annotation.SField;
 
+import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
-public class WallPaperResultModel {
+public class WallpapercaveModel implements Serializable {
     private static final long serialVersionUID = 673293417482457120L;
 
-    public WallPaperResultModel() {
-    }
-
-    public WallPaperResultModel(String imgWrapUrl, String imgUrl, List<String> tags, String fav, String views) {
-        this.imgWrapUrl = imgWrapUrl;
-        this.imgUrl = imgUrl;
-        this.tags = tags;
-        this.fav = fav;
-        this.views = views;
-    }
-
     public String imgWrapUrl;
+    @SField(jsoup = "div.MonOrig > a.MonBorder", jsoupAttr = "href")
     public String imgUrl;
-    public Map<String, String> params;
+    @SField(jsoup = "div.ImagePageTagWrap > div.TagWrap > a")
     public List<String> tags;
     public String imgW;
     public String imgH;
     public String size;
+    @SField(jsoup = "#ImageFavouriteCount")
     public String fav;
     public String views;
     public String thumbnail;
@@ -47,5 +38,9 @@ public class WallPaperResultModel {
                 ", thumbnailW='" + thumbnailW + '\'' +
                 ", thumbnailH='" + thumbnailH + '\'' +
                 '}';
+    }
+
+    public WallPaperResultModel cover() {
+        return new WallPaperResultModel(imgWrapUrl, imgUrl, tags, fav, views);
     }
 }

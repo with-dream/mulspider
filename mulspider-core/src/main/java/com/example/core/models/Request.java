@@ -36,6 +36,7 @@ public class Request extends Task {
     public String[] method;
     private transient String site;
     public String reqCharset = "utf-8";
+    //POST GET
     public String reqType;
     public Map<String, String> headers;
     public Map<String, String> params;

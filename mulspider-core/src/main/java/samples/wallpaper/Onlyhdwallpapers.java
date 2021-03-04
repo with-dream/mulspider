@@ -17,7 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Spider(name = Onlyhdwallpapers.NAME, enable = true)
+/**
+ * 放弃 需要刷新token  且质量一般
+ * */
+@Spider(name = Onlyhdwallpapers.NAME, enable = false)
 public class Onlyhdwallpapers extends WPTemp {
     public static final String NAME = "Onlyhdwallpapers";
     private Map<String, String> downHeader = new HashMap<>();

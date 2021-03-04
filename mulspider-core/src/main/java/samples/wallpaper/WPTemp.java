@@ -143,15 +143,9 @@ public class WPTemp extends SpiderApp {
     }
 
     protected void downFile(WallPaperResultModel model, String suffix) {
-        downFile(model, suffix, null);
-    }
-
-    protected void downFile(WallPaperResultModel model, String suffix, Map<String, String> headers) {
         Request request = new Request(name);
         request.url = model.imgUrl;
         request.method = downMethods;
-        if (headers != null)
-            request.headers = headers;
 
         String imgSuffix = suffix;
         if (StringUtils.isEmpty(imgSuffix))
