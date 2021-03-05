@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface Spider {
     String name() default "";
     boolean enable() default true;
+    boolean ignore() default false;
 }

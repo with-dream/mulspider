@@ -72,7 +72,7 @@ public class RocksQueueDB extends DBManager {
     }
 
     @Override
-    public <T> T get(String key) {
+    protected Object getReal(String key) {
         byte[] res = cacheSet.get(key.getBytes());
         if (ArrayUtils.isEmpty(res))
             return null;

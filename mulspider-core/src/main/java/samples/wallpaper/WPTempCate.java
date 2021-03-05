@@ -17,6 +17,7 @@ public class WPTempCate extends WPTemp {
     protected static final String CATE = "cater";
     protected String[] cateMethods;
     protected String homeUrl;
+    private AtomicInteger resetCount = new AtomicInteger(0);
 
     @Override
     protected void initUrl() {
@@ -53,7 +54,7 @@ public class WPTempCate extends WPTemp {
 
     /**
      * @return true 有为请求的url false url全部重复
-     * */
+     */
     protected boolean dupUrls(Response response, List<String> urls, boolean site, boolean separator, boolean save) {
         String cate = response.request.getMeta(CATE);
         if (dupList((site ? response.getSite() : "") + (separator ? "/" : ""), urls, save) != 0) {
@@ -72,6 +73,10 @@ public class WPTempCate extends WPTemp {
                 indexMap.get(cate).set(0);
                 dbManager.put(cate, indexMap.get(cate).get());
                 indexMap.get(DUP + cate).set(0);
+                if (resetCount.incrementAndGet() == indexMap.size()) {
+                    restartTime(Constant.RESTART_TIME);
+                    resetCount.set(0);
+                }
             }
             return false;
         }

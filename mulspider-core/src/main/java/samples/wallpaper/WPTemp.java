@@ -126,6 +126,7 @@ public class WPTemp extends SpiderApp {
             dbManager.put("pageIndex", index.get());
             emptyCount = 0;
             dupCount = 0;
+            restartTime(Constant.RESTART_TIME);
         }
         return null;
     }

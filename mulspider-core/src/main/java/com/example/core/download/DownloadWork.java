@@ -23,8 +23,8 @@ public class DownloadWork extends Work {
 
     @Override
     protected boolean work() {
-//        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime)
-//            return false;
+        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime)
+            return false;
 
         Request request = dbManager.getRequest();
         if (request == null) {
@@ -33,7 +33,7 @@ public class DownloadWork extends Work {
         }
 
         if (config.breakpoint)
-            dbManager.put(threadIndex + Constant.REQUEST, request);
+            dbManager.put(threadIndex + Constant.REQUEST_BK, request);
 
         switch (request.downType) {
             case CLIENT_POOL:
@@ -60,7 +60,7 @@ public class DownloadWork extends Work {
         dbManager.addTask(response);
 
         if (config.breakpoint)
-            dbManager.del(threadIndex + Constant.REQUEST);
+            dbManager.del(threadIndex + Constant.REQUEST_BK);
 
         ThreadUtils.sleep(Math.max(Constant.MIN_DOWN_DELAY_TIME, response.request.delayTime));
         currentDelayTime = System.currentTimeMillis();

@@ -14,8 +14,8 @@ public class ExtractWork extends Work {
 
     @Override
     protected boolean work() {
-//        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime)
-//            return false;
+        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime)
+            return false;
 
         Response response = dbManager.getResponse();
         if (response == null) {
@@ -23,17 +23,15 @@ public class ExtractWork extends Work {
             return true;
         }
         if (config.breakpoint)
-            dbManager.put(threadIndex + Constant.EXTRACT, response);
+            dbManager.put(threadIndex + Constant.EXTRACT_BK, response);
 
         handleTask(WorkType.extract, response, response.request);
 
         if (config.breakpoint)
-            dbManager.del(threadIndex + Constant.EXTRACT);
+            dbManager.del(threadIndex + Constant.EXTRACT_BK);
 
         ThreadUtils.sleep(response.request.delayTime);
         currentDelayTime = System.currentTimeMillis();
         return true;
     }
-
-
 }

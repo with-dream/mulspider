@@ -53,8 +53,8 @@ public class MemoryDB extends DBManager {
     }
 
     @Override
-    public <T> T get(String key) {
-        return (T) cacheMap.get(key);
+    protected Object getReal(String key) {
+        return cacheMap.get(key);
     }
 
     @Override

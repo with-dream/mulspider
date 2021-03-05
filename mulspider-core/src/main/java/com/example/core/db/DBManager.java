@@ -4,6 +4,7 @@ import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.models.Result;
 import com.example.core.models.Task;
+import com.example.core.utils.ReflectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
@@ -24,7 +25,12 @@ public abstract class DBManager {
 
     public abstract boolean put(String key, Object value);
 
-    public abstract <T> T get(String key);
+    public <T> T get(String key) {
+        Object res = getReal(key);
+        return (T) res;
+    }
+
+    protected abstract Object getReal(String key);
 
     public abstract boolean del(String key);
 

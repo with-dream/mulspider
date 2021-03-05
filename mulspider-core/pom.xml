@@ -115,4 +115,17 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>config/*.properties</include>
+                    <include>*.xml</include>
+                    <include>*</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 </project>

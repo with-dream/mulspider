@@ -14,6 +14,8 @@ import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -21,6 +23,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class ReflectInit {
+    private final static Logger logger = LoggerFactory.getLogger(ReflectInit.class);
+
     public void initAnnotation(Map<String, AnnMeta.AppMeta> appMap, Map<String, AnnMeta.WorkMeta> workMap
             , Map<String, MethodReflect> methodList, MethodReflectShare methodShare) {
         initAnnMeta(appMap, workMap);
@@ -102,6 +106,11 @@ public class ReflectInit {
                 if (!SpiderApp.class.isAssignableFrom(clazz))
                     throw new RuntimeException("@Spider can only be used on SpiderApp subclass, cannot used on class " + clazz.getName());
                 Spider annotation = clazz.getAnnotation(Spider.class);
+                if(annotation.ignore()) {
+                    logger.info("@Spider {} is ignore", clazz.getName());
+                    continue;
+                }
+
                 SpiderApp app = ReflectUtils.instance(clazz);
 
                 String keyName = annotation.name();
@@ -131,7 +140,7 @@ public class ReflectInit {
             }
 
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

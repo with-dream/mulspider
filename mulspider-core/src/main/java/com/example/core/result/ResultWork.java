@@ -15,8 +15,8 @@ public class ResultWork extends Work {
     protected boolean work() {
         Result result = dbManager.getResult();
 
-//        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime)
-//            return false;
+        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime)
+            return false;
 
         if (result == null) {
             delay(Constant.EMPTY_DELAY_TIME);
@@ -24,12 +24,12 @@ public class ResultWork extends Work {
         }
 
         if (config.breakpoint)
-            dbManager.put(threadIndex + Constant.RESULT, result);
+            dbManager.put(threadIndex + Constant.RESULT_BK, result);
 
         handleTask(WorkType.result, result, result.request);
 
         if (config.breakpoint)
-            dbManager.del(threadIndex + Constant.RESULT);
+            dbManager.del(threadIndex + Constant.RESULT_BK);
 
         delay(result.request.delayTime);
         currentDelayTime = System.currentTimeMillis();

@@ -8,7 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
         Context.instance().init();
-        Context.instance().run();
+        Context.instance().start();
 
         Scanner input = new Scanner(System.in);
         String str = input.next();

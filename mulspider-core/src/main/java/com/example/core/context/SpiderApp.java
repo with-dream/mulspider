@@ -73,11 +73,11 @@ public class SpiderApp {
     private void initBreakpoint() {
         Map<String, Object> cache = dbManager.getAll();
         for (Map.Entry<String, Object> entry : cache.entrySet()) {
-            if (entry.getValue() instanceof Request && entry.getKey().endsWith(Constant.REQUEST))
+            if (entry.getValue() instanceof Request && entry.getKey().endsWith(Constant.REQUEST_BK))
                 addTask((Task) entry.getValue(), true);
-            else if (entry.getValue() instanceof Response && entry.getKey().endsWith(Constant.EXTRACT))
+            else if (entry.getValue() instanceof Response && entry.getKey().endsWith(Constant.EXTRACT_BK))
                 addTask((Task) entry.getValue(), true);
-            else if (entry.getValue() instanceof Result && entry.getKey().endsWith(Constant.RESULT))
+            else if (entry.getValue() instanceof Result && entry.getKey().endsWith(Constant.RESULT_BK))
                 addTask((Task) entry.getValue(), true);
             else
                 dbManager.put(entry.getKey(), entry.getValue());
@@ -98,7 +98,7 @@ public class SpiderApp {
     public int dupList(String prefix, List<String> items, boolean save) {
         int count = 0;
         for (Object str : items) {
-            if (!duplicate(prefix  + str.toString(), save))
+            if (!duplicate(prefix + str.toString(), save))
                 count++;
         }
 
@@ -138,7 +138,16 @@ public class SpiderApp {
         dbManager.init(this.config.dbConfig);
     }
 
+    //ms
+    protected boolean restartTime(long restart) {
+        return dbManager.put(Constant.RESTART_DELAY_TAG, System.currentTimeMillis() + restart);
+    }
+
     protected void requestTimeout(Request request, IOException e) {
         appLogger.error("requestTimeout==>" + request + "  err:" + e.getMessage());
+    }
+
+    public void checkThread() {
+        workManager.checkThread(false);
     }
 }

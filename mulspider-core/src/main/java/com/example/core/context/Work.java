@@ -20,12 +20,12 @@ public abstract class Work implements Runnable {
         request, extract, result
     }
 
-    protected final static Logger logger = LoggerFactory.getLogger(Work.class);
+    protected Logger logger = LoggerFactory.getLogger(Work.class);
     protected int threadIndex = -1;
     public AtomicInteger threadCount;
     public AtomicInteger threadCountCur;
     protected DBManager dbManager;
-    protected long closeDelayTime = 10 * 60 * 1000;
+    protected long closeDelayTime = Constant.DELAY_CLOSE_TIME;
     protected long currentDelayTime = 0;
     protected Config config;
 

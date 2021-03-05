@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class Context {
+public class Context implements Runnable {
     private final static Logger logger = LoggerFactory.getLogger(SpiderApp.class);
 
     public Map<String, AnnMeta.AppMeta> appMap = new HashMap<>();
@@ -25,7 +25,7 @@ public class Context {
     public Map<String, MethodReflect> methodList = new HashMap<>();
     public MethodReflectShare methodShare = new MethodReflectShare();
 
-    private Executor downExecutor, extractExecutor, resultExecutor;
+    private Executor downExecutor, extractExecutor, resultExecutor, executor;
     private ExceptionThreadFactory threadFactory;
     private ReflectInit reflectInit = new ReflectInit();
 
@@ -79,6 +79,10 @@ public class Context {
                 , TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory, (r, executor) -> {
             logger.warn("resultExecutor work overflow");
         });
+        executor = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 60
+                , TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory, (r, executor) -> {
+            logger.warn("resultExecutor work overflow");
+        });
     }
 
     public void add(Work work) {
@@ -90,6 +94,7 @@ public class Context {
             this.resultExecutor.execute(work);
     }
 
+    @Override
     public void run() {
         for (AnnMeta.AppMeta appMeta : appMap.values()) {
             if (!appMeta.enable)
@@ -98,5 +103,19 @@ public class Context {
             appMeta.app.initInternal();
             appMeta.app.init();
         }
+
+        while (true) {
+            for (AnnMeta.AppMeta appMeta : appMap.values()) {
+                if (!appMeta.enable)
+                    continue;
+
+                appMeta.app.checkThread();
+                ThreadUtils.sleep(10 * 1000);
+            }
+        }
+    }
+
+    public void start() {
+        executor.execute(this);
     }
 }

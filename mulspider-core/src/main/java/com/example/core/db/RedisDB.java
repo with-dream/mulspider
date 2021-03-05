@@ -65,7 +65,7 @@ public class RedisDB extends DBManager {
     }
 
     @Override
-    public <T> T get(String key) {
+    protected Object getReal(String key) {
         Jedis jedis = getJedis();
         byte[] res = jedis.hget(cacheKey, key.getBytes());
         jedis.close();
