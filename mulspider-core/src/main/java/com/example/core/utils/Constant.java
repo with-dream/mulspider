@@ -1,7 +1,7 @@
 package com.example.core.utils;
 
 public class Constant {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static final String DEFAULT_EXTRACT_NAME = "extract";
     public static final String DEFAULT_RESULT_NAME = "result";
     public static final String DEFAULT_EXTRACT = "default_" + DEFAULT_EXTRACT_NAME;
@@ -26,11 +26,16 @@ public class Constant {
 
     public static final String RESTART_DELAY_TAG = "restart_delay_time";
     public static final String RESTART_LIMIT_START = "restart_limit_start";
-    public static final String RESTART_LIMIT_END = "restart_limit_end";
+    public static final String RESTART_LIMIT_DURATION = "restart_limit_duration";
+    public static final String WORK_RESET = "work_reset";
+
     public static final int MIN_DOWN_DELAY_TIME = 800;
-    public static final int EMPTY_DELAY_TIME = 2000;
-    public static final long DELAY_CLOSE_TIME = 10 * 60 * 1000;
-    public static final long RESTART_TIME = 24 * 60 * 60 * 1000;
+    public static final int EMPTY_DELAY_TIME = 200;
+//    public static final int EMPTY_DELAY_TIME = 2000;
+    public static final long DELAY_CLOSE_TIME = 2 * 60 * 1000;
+    //    public static final long DELAY_CLOSE_TIME = 10 * 60 * 1000;
+    public static final long RESTART_TIME = 3 * 60 * 1000;
+//    public static final long RESTART_TIME = 24 * 60 * 60 * 1000;
 
     public static final String RESULT_FILE_PATH = "./file";
 }

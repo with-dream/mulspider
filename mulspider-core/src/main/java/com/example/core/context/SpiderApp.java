@@ -32,7 +32,7 @@ public class SpiderApp {
     public void initInternal() {
         initDB();
 
-        workManager = new WorkManager(dbManager, config);
+        workManager = new WorkManager(this, config);
         workManager.init(config.downThreadCount, config.extractThreadCount, config.resultThreadCount);
 
         if (config.breakpoint)
@@ -56,6 +56,11 @@ public class SpiderApp {
     public void checkRequest(Request request) {
         if (StringUtils.isEmpty(request.userAgent))
             request.userAgent = UserAgentUtil.getUserAgent();
+    }
+
+    public void restart() {
+        appLogger.info("==>restart");
+        init();
     }
 
     public String getName() {

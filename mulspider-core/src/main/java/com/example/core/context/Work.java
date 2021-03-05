@@ -41,6 +41,7 @@ public abstract class Work implements Runnable {
     public void run() {
         currentDelayTime = System.currentTimeMillis();
         threadCountCur.incrementAndGet();
+//        logger.info("work==>" + threadCountCur.get() + "  " + this.getClass().getSimpleName());
         while (threadIndex < threadCount.get())
             if (!work())
                 break;
@@ -61,7 +62,7 @@ public abstract class Work implements Runnable {
             if (request.method != null && request.method.length != 0) {
                 for (String m : request.method)
                     if ((mdMeta = mr.emMap.get(m)) != null && !mdMeta.share) {
-                        logger.info(String.format("test method==>app:%s  %s methodName:%s", request.name, "extract", m));
+//                        logger.info(String.format("test method==>app:%s  %s methodName:%s", request.name, "extract", m));
                         invoke(mr.obj, mdMeta, task, true);
                     }
             }

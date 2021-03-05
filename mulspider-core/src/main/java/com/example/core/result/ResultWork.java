@@ -13,11 +13,12 @@ public class ResultWork extends Work {
 
     @Override
     protected boolean work() {
-        Result result = dbManager.getResult();
-
-        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime)
+        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime) {
+            logger.info("==>result work close");
             return false;
+        }
 
+        Result result = dbManager.getResult();
         if (result == null) {
             delay(Constant.EMPTY_DELAY_TIME);
             return true;

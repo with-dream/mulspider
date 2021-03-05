@@ -14,8 +14,10 @@ public class ExtractWork extends Work {
 
     @Override
     protected boolean work() {
-        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime)
+        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime) {
+            logger.info("==>extract work close");
             return false;
+        }
 
         Response response = dbManager.getResponse();
         if (response == null) {

@@ -16,6 +16,7 @@ public class DownloadWork extends Work {
     }
 
     private DownloadHandle downloader;
+    public volatile boolean stopForce;
 
     public DownloadWork(Config config) {
         super(config);
@@ -23,8 +24,13 @@ public class DownloadWork extends Work {
 
     @Override
     protected boolean work() {
-        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime)
+        if (stopForce)
             return false;
+
+        if (System.currentTimeMillis() - currentDelayTime > closeDelayTime) {
+            logger.info("==>down work close");
+            return false;
+        }
 
         Request request = dbManager.getRequest();
         if (request == null) {

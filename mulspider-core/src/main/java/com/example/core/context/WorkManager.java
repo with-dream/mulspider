@@ -6,6 +6,9 @@ import com.example.core.extract.ExtractWork;
 import com.example.core.result.ResultWork;
 import com.example.core.utils.Constant;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import samples.wallpaper.Cons;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,32 +16,40 @@ import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WorkManager {
+    private final static Logger logger = LoggerFactory.getLogger(WorkManager.class);
     private DBManager dbManager;
+    private Config config;
+    private SpiderApp spiderApp;
+    private boolean restartLimit = true;
+
     private AtomicInteger threadDownCount = new AtomicInteger(1);
     private AtomicInteger threadExtraCount = new AtomicInteger(1);
     private AtomicInteger threadResultCount = new AtomicInteger(1);
     private AtomicInteger threadDownCur = new AtomicInteger(0);
     private AtomicInteger threadExtraCur = new AtomicInteger(0);
     private AtomicInteger threadResultCur = new AtomicInteger(0);
-    private Config config;
 
-    public WorkManager(DBManager dbManager, Config config) {
-        this.dbManager = dbManager;
+    public WorkManager(SpiderApp spiderApp, Config config) {
+        this.spiderApp = spiderApp;
+        this.dbManager = spiderApp.dbManager;
         this.config = config;
     }
 
     public void checkThread(boolean force) {
-        int reqSize = (int) dbManager.getRequestSize();
-        boolean restartLimit = true;
         boolean restart = true;
+        boolean continueWork = true;
+        int reqSize = (int) dbManager.getRequestSize();
 
         if (!force) {
             Long restartTime = dbManager.get(Constant.RESTART_DELAY_TAG);
-            restart = restartTime == null || restartTime == 0 || (restartTime > 0 && System.currentTimeMillis() > restartTime);
+            continueWork = restartTime == null || restartTime == 0 || (restartTime > 0 && System.currentTimeMillis() > restartTime);
+            restart = restartTime != null && restartTime > 0 && System.currentTimeMillis() > restartTime;
+            if (restartTime != null && restartTime != 0)
+                logger.info("restartTime diff==>{}", (restartTime - System.currentTimeMillis()) / 1000);
 
             String restartLimitStart = dbManager.get(Constant.RESTART_LIMIT_START);
             if (StringUtils.isNotEmpty(restartLimitStart)) {
-                Long restartLimitDuration = dbManager.get(Constant.RESTART_LIMIT_END);
+                Long restartLimitDuration = dbManager.get(Constant.RESTART_LIMIT_DURATION);
 
                 String[] format = {"ss", "mm:", "HH:", "dd ", "MM-"};
                 String[] limitStart = restartLimitStart.split("-|\\s+|:");
@@ -59,15 +70,22 @@ public class WorkManager {
                     e.printStackTrace();
                 }
             }
+
+            if (restartLimit && restart && threadDownCur.get() == 0) {
+                spiderApp.restart();
+                dbManager.put(Constant.RESTART_DELAY_TAG, 0L);
+            }
         }
-        if (reqSize > 0 && restartLimit && restart) {
+
+        if (reqSize > 0 && restartLimit && continueWork) {
             int downTh = Math.min(reqSize / 3, threadDownCount.get());
             downTh = Math.max(1, downTh);
             if (downTh > threadDownCur.get())
                 for (int i = threadDownCur.get(); i < downTh; i++) {
-                    Work work = new DownloadWork(this.config);
+                    DownloadWork work = new DownloadWork(this.config);
                     work.threadCount = threadDownCount;
                     work.threadCountCur = threadDownCur;
+                    work.stopForce = !restartLimit;
                     work.threadIndex = i;
                     work.setDbManager(this.dbManager);
                     Context.instance().add(work);

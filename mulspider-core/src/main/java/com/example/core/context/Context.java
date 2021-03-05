@@ -26,7 +26,6 @@ public class Context implements Runnable {
     public MethodReflectShare methodShare = new MethodReflectShare();
 
     private Executor downExecutor, extractExecutor, resultExecutor, executor;
-    private ExceptionThreadFactory threadFactory;
     private ReflectInit reflectInit = new ReflectInit();
 
     private Context() {
@@ -66,21 +65,20 @@ public class Context implements Runnable {
 
     private void initThreadPool() {
         CustomUncaughtExceptionHandler handler = new CustomUncaughtExceptionHandler();
-        threadFactory = new ExceptionThreadFactory(handler);
         downExecutor = new ThreadPoolExecutor(2, Integer.MAX_VALUE, 60
-                , TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory, (r, executor) -> {
+                , TimeUnit.SECONDS, new SynchronousQueue<>(), new ExceptionThreadFactory(handler), (r, executor) -> {
             logger.warn("downExecutor work overflow");
         });
         extractExecutor = new ThreadPoolExecutor(2, Integer.MAX_VALUE, 60
-                , TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory, (r, executor) -> {
+                , TimeUnit.SECONDS, new SynchronousQueue<>(), new ExceptionThreadFactory(handler), (r, executor) -> {
             logger.warn("extractExecutor work overflow");
         });
         resultExecutor = new ThreadPoolExecutor(2, Integer.MAX_VALUE, 60
-                , TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory, (r, executor) -> {
+                , TimeUnit.SECONDS, new SynchronousQueue<>(), new ExceptionThreadFactory(handler), (r, executor) -> {
             logger.warn("resultExecutor work overflow");
         });
         executor = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 60
-                , TimeUnit.SECONDS, new SynchronousQueue<>(), threadFactory, (r, executor) -> {
+                , TimeUnit.SECONDS, new SynchronousQueue<>(), new ExceptionThreadFactory(handler), (r, executor) -> {
             logger.warn("resultExecutor work overflow");
         });
     }

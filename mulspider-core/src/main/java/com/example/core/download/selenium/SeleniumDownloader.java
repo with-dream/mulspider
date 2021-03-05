@@ -1,11 +1,9 @@
 package com.example.core.download.selenium;
 
-import com.example.core.context.Work;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.download.DownloadHandle;
 import com.example.core.utils.CharsetUtils;
-import com.example.core.utils.CollectionUtils;
 import com.example.core.utils.ThreadUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;

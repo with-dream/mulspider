@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Spider(name = Badfon.NAME, enable = true)
+@Spider(name = Badfon.NAME, enable = false)
 public class Badfon extends WPTemp {
     public static final String NAME = "Badfon";
 
