@@ -35,8 +35,6 @@ public class TestCateSpider extends TempCateSpider {
     private Result extractCate(Response response) {
         List<String> cates = gson.fromJson(response.body, List.class);
 
-        logger.info("cates==>" + cates);
-
         for (String cate : cates) {
             int cateIndex = initCateIndex(cate);
             createCateReq(cate, getCateUrl(cate, cateIndex));
@@ -46,14 +44,17 @@ public class TestCateSpider extends TempCateSpider {
 
     @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
+        Result result = new Result();
+        result.ignore = true;
+
         List<String> urls = gson.fromJson(response.body, List.class);
 
-        logger.info("==>" + urls.size() + "  " + urls.get(0));
+//        logger.info("==>" + urls.size() + "  " + urls.get(0));
 
-        if (!dupUrls(response, urls, true))
-            return Result.makeIgnore();
+        if (!dupUrls(response, urls, true)) {
+            return result;
+        }
 
-        logger.info("end==>" + urls.size());
         for (String url : urls) {
             Request request = new Request(name);
             request.url = response.getSite() + url;
@@ -61,10 +62,9 @@ public class TestCateSpider extends TempCateSpider {
 
 //            addTask(request);
             if (addTask(request))
-                logger.info("extractItem==>" + count.incrementAndGet());
+                count.incrementAndGet();
         }
-
-        return Result.makeIgnore();
+        return result;
     }
 
     @ExtractMethod(methods = {NAME + EXTRACT_INFO})
@@ -74,7 +74,10 @@ public class TestCateSpider extends TempCateSpider {
 
 //        logger.info("body  end==>" + body);
         result.put(RESULT, body);
-        logger.info("extractInfo==>" + count.decrementAndGet());
+        count.decrementAndGet();
+
+        if (count.get() % 10 == 0 || count.get() == 0)
+            logger.info("count==>" + count.get());
 
 //        return result;
         return Result.makeIgnore();

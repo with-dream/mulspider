@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import samples.wallpaper.WallHaven;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
@@ -135,10 +136,9 @@ public abstract class Work implements Runnable {
                 param[i] = ReflectUtils.getDefaultValue(clazz[i]);
 
         Task result = null;
-        logger.debug("invoke lock==>" + mdMeta.lock);
-        if (mdMeta.lock == null)
+        if (mdMeta.lock == null) {
             result = ReflectUtils.invoke(obj, mdMeta.method, param, mdMeta.accessible);
-        else
+        } else
             synchronized (mdMeta.lock) {
                 result = ReflectUtils.invoke(obj, mdMeta.method, param, mdMeta.accessible);
             }
@@ -148,8 +148,9 @@ public abstract class Work implements Runnable {
                 if (!result.ignore) {
                     dbManager.addTask(result);
                 }
-            } else
+            } else {
                 logger.error("{}.{} extract result is null", obj.getClass().getSimpleName(), mdMeta.method.getName());
+            }
         }
 
         if (mdMeta.mr.releaseMeta != null && !mdMeta.mr.isApp && !mdMeta.mr.singleton)

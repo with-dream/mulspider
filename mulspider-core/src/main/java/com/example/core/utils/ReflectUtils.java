@@ -12,10 +12,13 @@ public class ReflectUtils {
         md.setAccessible(true);
         try {
             return (T) md.invoke(obj, param);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            Throwable t = e.getTargetException();// 获取目标异常
+            t.printStackTrace();
         }
-
+        System.err.println("invoke==>111");
         return null;
     }
 

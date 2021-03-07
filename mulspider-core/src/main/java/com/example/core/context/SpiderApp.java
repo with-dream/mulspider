@@ -68,7 +68,7 @@ public class SpiderApp {
     }
 
     public Result extract(Response response) {
-        return null;
+        return Result.makeIgnore();
     }
 
     public boolean result(Result result) {

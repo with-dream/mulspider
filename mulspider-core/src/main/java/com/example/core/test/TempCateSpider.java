@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TempCateSpider extends TempSpider {
     protected Map<String, AtomicInteger> indexMap = new HashMap<>();
 
-    protected static final String DUP = "dup_";
+    protected static final String DUP_COUNT = "dup_count_";
     protected static final String CATE = "cater";
     protected String homeUrl;
     protected String cateUrl;
@@ -30,8 +30,7 @@ public class TempCateSpider extends TempSpider {
             indexTmp = initIndex();
         AtomicInteger aInt = new AtomicInteger(indexTmp);
         indexMap.put(cate, aInt);
-        dbManager.put(cate, aInt.get());
-        indexMap.put(DUP + cate, new AtomicInteger(0));
+        indexMap.put(DUP_COUNT + cate, new AtomicInteger(0));
         resetCount.incrementAndGet();
         return aInt.get();
     }
@@ -65,23 +64,24 @@ public class TempCateSpider extends TempSpider {
      */
     protected boolean dupUrls(Response response, List<String> urls, String baseUrl, boolean save) {
         String cate = response.request.getMeta(CATE);
-        AtomicInteger cateIndex = indexMap.get(DUP + response.request.getMeta(CATE));
+        AtomicInteger cateDupCount = indexMap.get(DUP_COUNT + response.request.getMeta(CATE));
+        AtomicInteger integer = indexMap.get(cate);
         if (dupList(baseUrl, urls, save) != 0) {
-            cateIndex.set(0);
-            AtomicInteger integer = indexMap.get(cate);
+            cateDupCount.set(0);
             if (Constant.DEBUG && integer.get() > 3)
                 return false;
             createCateReq(cate, getCateUrl(cate, integer.incrementAndGet()));
             dbManager.put(cate, integer.get());
         } else {
-            if (cateIndex.incrementAndGet() < 3) {
+            if (cateDupCount.incrementAndGet() < 3) {
                 logger.warn("dupCount==>" + dupCount);
-                createCateReq(response.request.getMeta(CATE), getCateUrl(response.request.getMeta(CATE), indexMap.get(CATE).incrementAndGet()));
+                createCateReq(cate, getCateUrl(cate, integer.incrementAndGet()));
+                dbManager.put(cate, integer.get());
             } else {
                 logger.warn("==>dup reset");
-                indexMap.get(cate).set(0);
-                dbManager.put(cate, indexMap.get(cate).get());
-                indexMap.get(DUP + cate).set(0);
+                integer.set(initIndex());
+                dbManager.put(cate, integer.get());
+                cateDupCount.set(0);
                 logger.info("resetCount==>" + resetCount.get());
                 if (resetCount.decrementAndGet() == 0) {
                     restartTime(Constant.RESTART_TIME);

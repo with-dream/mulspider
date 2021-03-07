@@ -27,12 +27,12 @@ public class TestController {
                     index = 30;
                 return createUrls(cate, index);
             case "c2":
-                if (index > 10)
-                    index = 10;
+                if (index > 50)
+                    index = 50;
                 return createUrls(cate, index);
             case "c3":
-                if (index > 20)
-                    index = 20;
+                if (index > 70)
+                    index = 70;
                 return createUrls(cate, index);
         }
         return null;
