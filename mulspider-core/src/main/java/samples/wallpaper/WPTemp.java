@@ -154,8 +154,8 @@ public class WPTemp extends SpiderApp {
         String imgSuffix = suffix;
         if (StringUtils.isEmpty(imgSuffix))
             imgSuffix = model.imgUrl.substring(model.imgUrl.lastIndexOf("."));
-        request.meta.put(Constant.DOWN_FILE, WallPaperResult.DOWN_PATH + name + "/" + UUID.randomUUID().toString()
-                + imgSuffix);
+        request.meta.put(Constant.DOWN_FILE_PATH, WallPaperResult.DOWN_PATH + name);
+        request.meta.put(Constant.DOWN_FILE_NAME, UUID.randomUUID().toString() + imgSuffix);
         addTask(request);
     }
 

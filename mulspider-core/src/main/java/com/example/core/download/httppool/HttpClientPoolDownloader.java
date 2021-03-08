@@ -64,7 +64,7 @@ public class HttpClientPoolDownloader extends DownloadHandle {
     private Response handleResponse(Request request, HttpResponse httpResponse, CookieStore cookieStore) throws IOException {
         Response response = Response.make(request, httpResponse.getStatusLine().getStatusCode());
 
-        if (StringUtils.isEmpty(request.getMeta(Constant.DOWN_FILE))) {
+        if (StringUtils.isEmpty(request.getMeta(Constant.DOWN_FILE_PATH))) {
             byte[] bytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
             String content = httpResponse.getEntity().getContentType() == null ? "" : httpResponse.getEntity().getContentType().getValue();
             if (StringUtils.isEmpty(response.resCharset))
@@ -76,15 +76,16 @@ public class HttpClientPoolDownloader extends DownloadHandle {
             FileOutputStream fos = null;
 
             try {
-                String file = request.getMeta(Constant.DOWN_FILE);
-                if (file.contains("/")) {
-                    String path = file.substring(0, file.lastIndexOf("/"));
-                    if (StringUtils.isNotEmpty(path)) {
-                        File dir = new File(path);
-                        if (!dir.exists())
-                            if (!dir.mkdirs())
-                                throw new RuntimeException("create dir failed:" + dir.getAbsolutePath());
-                    }
+                String filePath = request.getMeta(Constant.DOWN_FILE_PATH);
+                String fileName = request.getMeta(Constant.DOWN_FILE_NAME);
+                if(StringUtils.isEmpty(fileName))
+                    throw new RuntimeException("download file name is null");
+                String file = filePath + "/" + fileName;
+                if (StringUtils.isNotEmpty(filePath)) {
+                    File dir = new File(filePath);
+                    if (!dir.exists())
+                        if (!dir.mkdirs())
+                            throw new RuntimeException("create dir failed:" + dir.getAbsolutePath());
                 }
 
                 fos = new FileOutputStream(file);

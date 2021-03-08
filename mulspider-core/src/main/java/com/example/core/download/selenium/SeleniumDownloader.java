@@ -4,6 +4,7 @@ import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.download.DownloadHandle;
 import com.example.core.utils.CharsetUtils;
+import com.example.core.utils.Constant;
 import com.example.core.utils.ThreadUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -13,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.logging.Logs;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -29,6 +32,7 @@ public class SeleniumDownloader extends DownloadHandle {
     }
 
     protected final static Logger logger = LoggerFactory.getLogger(SeleniumDownloader.class);
+    private List<DownDriver> drivers = new ArrayList<>();
 
     private WebDriver createDriver(Request request) {
         WebDriver webDriver = null;
@@ -43,8 +47,18 @@ public class SeleniumDownloader extends DownloadHandle {
                     options.addArguments("--no-sandbox");
                     options.addArguments("--disable-dev-shm-usage");
                     options.addArguments("--start-maximized");
+                    options.addArguments("blink-settings=imagesEnabled=false");
                     //因为报表页面必须滚动才能全部展示，这里直接给个很大的高度
 //                    options.addArguments("--window-size=1280,8600");
+                }
+
+                if (StringUtils.isNotEmpty(request.getMeta(Constant.DOWN_FILE_PATH))) {
+                    String filePath = request.getMeta(Constant.DOWN_FILE_PATH);
+                    HashMap<String, Object> chromePrefs = new HashMap<>();
+                    chromePrefs.put("download.default_directory", filePath);
+                    chromePrefs.put("browser.download.manager.showWhenStarting", false);
+                    chromePrefs.put("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream");
+                    options.setExperimentalOption("prefs", chromePrefs);
                 }
 
                 if (request.headers != null && !request.headers.isEmpty())
@@ -92,7 +106,9 @@ public class SeleniumDownloader extends DownloadHandle {
     public Response down(Request request) {
         Random random = new Random();
         Response response = null;
+
         WebDriver webDriver = createDriver(request);
+
         try {
             webDriver.manage().timeouts().implicitlyWait(request.timeOut * 3L, TimeUnit.SECONDS);
             WebDriver.Options manage = webDriver.manage();
@@ -130,9 +146,31 @@ public class SeleniumDownloader extends DownloadHandle {
             if (delay == 0)
                 delay = (int) (500 + 500 * random.nextFloat());
             ThreadUtils.sleep(delay);
-            webDriver.close();
+
+            logger.info("drivers size==>{}", drivers.size());
+            Iterator<DownDriver> it = drivers.iterator();
+            while (it.hasNext()) {
+                DownDriver dd = it.next();
+                if (System.currentTimeMillis() - dd.time > Constant.DOWN_LOAD_TIME_OUT) {
+                    dd.webDriver.quit();
+                    it.remove();
+                }
+            }
+
+            if (StringUtils.isNotEmpty(request.getMeta(Constant.DOWN_FILE_PATH))) {
+                DownDriver downDriver = new DownDriver();
+                downDriver.webDriver = webDriver;
+                downDriver.time = System.currentTimeMillis();
+                drivers.add(downDriver);
+            } else
+                webDriver.close();
         }
 
         return response;
+    }
+
+    private static class DownDriver {
+        WebDriver webDriver;
+        long time;
     }
 }

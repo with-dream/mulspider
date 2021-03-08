@@ -37,9 +37,9 @@ public class TempCateSpider extends TempSpider {
 
     protected void createCateReq(String cate, String url) {
         Request request = new Request(name);
-        if (initReqType == DownloadWork.DownType.CLIENT_POOL)
+        if (downType == DownloadWork.DownType.CLIENT_POOL)
             request.httpPool();
-        else if (initReqType == DownloadWork.DownType.CLIENT_WEBDRIVER)
+        else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
             request.headless();
         request.method = itemMethods;
         request.meta.put(CATE, cate);

@@ -12,7 +12,7 @@ import samples.wallpaper.WallPaperResult;
 
 import java.util.List;
 
-@Spider(name = TestCateSpider.NAME, enable = true)
+@Spider(name = TestCateSpider.NAME, enable = false)
 public class TestCateSpider extends TempCateSpider {
     public static final String NAME = "TestCateSpider";
     private Gson gson = new Gson();

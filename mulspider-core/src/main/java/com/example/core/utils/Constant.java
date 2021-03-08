@@ -13,7 +13,8 @@ public class Constant {
     public static final String REQUEST_BK = "request_bk";
     public static final String EXTRACT_BK = "extract_bk";
     public static final String RESULT_BK = "result_bk";
-    public static final String DOWN_FILE = "__down_file__";
+    public static final String DOWN_FILE_PATH = "__down_file_path__";
+    public static final String DOWN_FILE_NAME = "__down_file_name__";
     public static final String DOWN_FILE_RES = "__down_file_response__";
 
     public static final int DB_ROCK = 0;
@@ -30,8 +31,9 @@ public class Constant {
     public static final String WORK_RESET = "work_reset";
 
     public static final int MIN_DOWN_DELAY_TIME = 800;
+    public static final int DOWN_LOAD_TIME_OUT = 2 * 60 * 60 * 1000;
     public static final int EMPTY_DELAY_TIME = 200;
-//    public static final int EMPTY_DELAY_TIME = 2000;
+    //    public static final int EMPTY_DELAY_TIME = 2000;
     public static final long DELAY_CLOSE_TIME = 2 * 60 * 1000;
     //    public static final long DELAY_CLOSE_TIME = 10 * 60 * 1000;
     public static final long RESTART_TIME = 3 * 60 * 1000;

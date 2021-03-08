@@ -25,6 +25,7 @@ public class TempSpider extends SpiderApp {
     protected static final String EXTRACT_ITEM = ".extractItem";
     protected static final String EXTRACT_INFO = ".extractInfo";
     protected static final String EXTRACT_INFO_1 = ".extractInfo_1";
+    protected static final String DOWN_FILE = ".down_file";
 
     protected static final String RESULT = "result";
     protected static final String RESULT_LIST = "result_list";
@@ -42,7 +43,7 @@ public class TempSpider extends SpiderApp {
     protected String[] infoMethods_1;
     protected String[] downMethods;
 
-    protected DownloadWork.DownType initReqType = DownloadWork.DownType.CLIENT_POOL;
+    protected DownloadWork.DownType downType = DownloadWork.DownType.CLIENT_POOL;
     protected boolean responseCookie;
     protected Map<String, String> headers;
 
@@ -52,6 +53,7 @@ public class TempSpider extends SpiderApp {
         itemMethods = new String[]{name + EXTRACT_ITEM};
         infoMethods = new String[]{name + EXTRACT_INFO};
         infoMethods_1 = new String[]{name + EXTRACT_INFO_1};
+        downMethods = new String[]{name + DOWN_FILE};
 
         if (preReq) {
             initRequest(preUrl, preMethods);
@@ -87,9 +89,9 @@ public class TempSpider extends SpiderApp {
 
     protected void initRequest(String url, String[] mothods) {
         Request request = new Request(name);
-        if (initReqType == DownloadWork.DownType.CLIENT_POOL)
+        if (downType == DownloadWork.DownType.CLIENT_POOL)
             request.httpPool();
-        else if (initReqType == DownloadWork.DownType.CLIENT_WEBDRIVER)
+        else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
             request.headless();
         request.responseCookie = responseCookie;
         request.method = mothods;
@@ -160,21 +162,22 @@ public class TempSpider extends SpiderApp {
         return String.format(baseUrl, index.getAndIncrement());
     }
 
-    protected void downFile(WallPaperResultModel model, String suffix) {
-        Request request = new Request(name);
-        request.url = model.imgUrl;
+    protected void downFile(String url, String fileName, String suffix) {
+        Request request = new Request(this.name);
+        request.url = url;
+        if (downType == DownloadWork.DownType.CLIENT_POOL)
+            request.httpPool();
+        else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
+            request.headless();
         request.method = downMethods;
 
         String imgSuffix = suffix;
         if (StringUtils.isEmpty(imgSuffix))
-            imgSuffix = model.imgUrl.substring(model.imgUrl.lastIndexOf("."));
-        request.meta.put(Constant.DOWN_FILE, WallPaperResult.DOWN_PATH + name + "/" + UUID.randomUUID().toString()
+            imgSuffix = url.substring(url.lastIndexOf("."));
+        request.meta.put(Constant.DOWN_FILE_PATH, WallPaperResult.DOWN_PATH + this.name);
+        request.meta.put(Constant.DOWN_FILE_NAME, (StringUtils.isEmpty(fileName) ? UUID.randomUUID().toString() : fileName)
                 + imgSuffix);
         addTask(request);
-    }
-
-    protected void downFile(WallPaperResultModel model) {
-        downFile(model, null);
     }
 }
 

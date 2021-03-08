@@ -55,12 +55,12 @@ public class DownloadWork extends Work {
         downloader.downloadTimeout = config.downloadTimeout;
 
         Response response = downloader.down(request);
-        if (response == null || (StringUtils.isEmpty(response.body) && StringUtils.isEmpty(request.getMeta(Constant.DOWN_FILE)))) {
+        if (response == null || (StringUtils.isEmpty(response.body) && StringUtils.isEmpty(request.getMeta(Constant.DOWN_FILE_PATH)))) {
             logger.error("DownloadWork response is empty==>" + request.url);
             ThreadUtils.sleep(Constant.EMPTY_DELAY_TIME);
             return true;
         }
-        if (StringUtils.isEmpty(request.getMeta(Constant.DOWN_FILE)))
+        if (StringUtils.isEmpty(request.getMeta(Constant.DOWN_FILE_PATH)))
             logger.debug("DownloadWork==>" + response.body.length());
 
         dbManager.addTask(response);
