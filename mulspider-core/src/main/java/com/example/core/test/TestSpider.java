@@ -20,7 +20,7 @@ import samples.wallpaper.WallPaperResultModel;
 import java.util.ArrayList;
 import java.util.List;
 
-@Spider(name = TestSpider.NAME, enable = true)
+@Spider(name = TestSpider.NAME, enable = false)
 public class TestSpider extends TempSpider {
     public static final String NAME = "TestSpider";
     private Gson gson = new Gson();

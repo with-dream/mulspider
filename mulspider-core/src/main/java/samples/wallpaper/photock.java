@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * 下载需要cookie 卒
+ * //FAIL 下载需要cookie 卒
  * */
 @Spider(name = photock.NAME, enable = false)
 public class photock extends WPTemp {

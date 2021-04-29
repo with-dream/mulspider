@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 下载需要cookie 卒
+ * //FAIL 下载需要cookie 卒
  */
-@Spider(name = pakutaso.NAME, enable = false)
+@Spider(name = pakutaso.NAME, enable = true)
 public class pakutaso extends WPTempCate {
     public static final String NAME = "pakutaso";
 

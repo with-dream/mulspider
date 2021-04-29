@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 有水印 放弃
+ * //FAIL 有水印 放弃
  * */
 @Spider(name = Cgwallpapers.NAME, enable = false)
 public class Cgwallpapers extends WPTemp {

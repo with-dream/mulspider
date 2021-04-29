@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * 下载需要cookie 需要先完善webdriver
+ * //FAIL 下载需要cookie 需要先完善webdriver
  * */
 @Spider(name = Wallpapervortex.NAME, enable = false)
 public class Wallpapervortex extends WPTemp {

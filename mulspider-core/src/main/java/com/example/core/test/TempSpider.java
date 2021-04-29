@@ -89,10 +89,10 @@ public class TempSpider extends SpiderApp {
 
     protected void initRequest(String url, String[] mothods) {
         Request request = new Request(name);
-        if (downType == DownloadWork.DownType.CLIENT_POOL)
-            request.httpPool();
-        else if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
+        if (downType == DownloadWork.DownType.CLIENT_WEBDRIVER)
             request.headless();
+        else
+            request.httpPool();
         request.responseCookie = responseCookie;
         request.method = mothods;
         request.url = url;

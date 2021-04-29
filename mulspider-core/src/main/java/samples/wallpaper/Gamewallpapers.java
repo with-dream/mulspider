@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 有水印 草
+ * //FAIL 有水印 草
  * */
 @Spider(name = Gamewallpapers.NAME, enable = false)
 public class Gamewallpapers extends WPTemp {

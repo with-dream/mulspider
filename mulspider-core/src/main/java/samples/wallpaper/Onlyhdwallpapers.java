@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 放弃 需要刷新token  且质量一般
+ * //FAIL 放弃 需要刷新token  且质量一般
  * */
 @Spider(name = Onlyhdwallpapers.NAME, enable = false)
 public class Onlyhdwallpapers extends WPTemp {
