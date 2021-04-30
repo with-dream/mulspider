@@ -15,16 +15,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * //FAIL 下载需要cookie 卒
- */
-@Spider(name = pakutaso.NAME, enable = true)
+@Spider(name = pakutaso.NAME, enable = false)
 public class pakutaso extends WPTempCate {
     public static final String NAME = "pakutaso";
 
     public pakutaso() {
         logger = LoggerFactory.getLogger(this.getClass());
-        homeUrl = "https://www.pakutaso.com/";
+        baseUrl = homeUrl = "https://www.pakutaso.com/";
         cateMethods = new String[]{NAME + EXTRACT_CATE};
         itemMethods = new String[]{NAME + EXTRACT_ITEM};
         infoMethods = new String[]{NAME + EXTRACT_INFO, WallPaperResult.WallPaperResult};
@@ -39,7 +36,10 @@ public class pakutaso extends WPTempCate {
 
     @Override
     protected String getCateUrl(String cate, int index) {
-        return String.format("https://www.pakutaso.com%sindex_%d.html", cate, index);
+        if (index == 1)
+            return String.format("https://www.pakutaso.com%s", cate);
+        else
+            return String.format("https://www.pakutaso.com%sindex_%d.html", cate, index);
     }
 
     @ExtractMethod(methods = {NAME + EXTRACT_CATE})
