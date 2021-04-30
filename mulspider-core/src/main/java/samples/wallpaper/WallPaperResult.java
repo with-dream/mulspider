@@ -11,6 +11,7 @@ import com.example.core.utils.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SpiderWork
@@ -18,12 +19,18 @@ public class WallPaperResult {
     private final static Logger logger = LoggerFactory.getLogger(WallPaperResult.class);
     public static final String WallPaperResult = "wallpaper.result";
     public static final String WallPaperFile = "wallpaper.file";
-    public static final String DOWN_PATH = "F:\\img_down/";
+    public static final String DOWN_PATH = "F:/img_down/";
+//    public static final String DOWN_PATH = "./file/download/";
     AtomicInteger count = new AtomicInteger(0);
 
     @WorkInit
     public void init() {
-
+        File file = new File(DOWN_PATH);
+        if(!file.exists()) {
+            if(!file.mkdir()) {
+                logger.error("create dir failed : "+DOWN_PATH);
+            }
+        }
     }
 
     @ResultMethod(methods = {WallPaperResult})

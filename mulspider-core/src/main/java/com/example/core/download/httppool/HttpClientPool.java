@@ -153,7 +153,7 @@ public class HttpClientPool {
 
     public HttpClientContext getHttpClientContext(Request request) {
         HttpClientContext httpContext = new HttpClientContext();
-        if (!StrUtils.isEmpty(request.proxyUrl)) {
+        if (!StrUtils.isEmpty(request.proxyUrl) && StringUtils.isNotEmpty(request.proxyUserName)) {
             AuthState authState = new AuthState();
             authState.update(new BasicScheme(ChallengeState.PROXY), new UsernamePasswordCredentials(request.proxyUserName, request.proxyPassword));
             httpContext.setAttribute(HttpClientContext.PROXY_AUTH_STATE, authState);

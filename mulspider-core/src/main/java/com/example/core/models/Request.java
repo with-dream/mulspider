@@ -52,14 +52,14 @@ public class Request extends Task {
     public String proxyPassword;
 
     public DownloadWork.DownType downType = DownloadWork.DownType.CLIENT_POOL;
-    public int delayTime = 300;
+    public int delayTime = 50 * 1000;
     public SeleniumDownloader.DriverType driver;
 
     public boolean force;   //是否去重
 
     //失败重试
     public int retryCount = 5;
-    public int timeOut = 30 * 1000;
+    public int timeOut = 60 * 1000;
     public int retryIndex;
 
     public Request(String name) {

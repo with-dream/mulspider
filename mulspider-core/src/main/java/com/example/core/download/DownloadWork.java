@@ -1,6 +1,8 @@
 package com.example.core.download;
 
 import com.example.core.context.Config;
+import com.example.core.context.Context;
+import com.example.core.download.proxypool.LocalProxyPool;
 import com.example.core.models.Request;
 import com.example.core.models.Response;
 import com.example.core.context.Work;
@@ -53,6 +55,10 @@ public class DownloadWork extends Work {
         }
 
         downloader.downloadTimeout = config.downloadTimeout;
+
+        if (Context.instance().globalConfig.proxy_pool) {
+            LocalProxyPool.proxy(request);
+        }
 
         Response response = downloader.down(request);
         if (response == null || (StringUtils.isEmpty(response.body) && StringUtils.isEmpty(request.getMeta(Constant.DOWN_FILE_PATH)))) {

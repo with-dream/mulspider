@@ -2,10 +2,11 @@ package samples.wallpaper;
 
 import com.example.core.annotation.SField;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class WallPaperResultModel {
+public class WallPaperResultModel implements Serializable {
     private static final long serialVersionUID = 673293417482457120L;
 
     public WallPaperResultModel() {
