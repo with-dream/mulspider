@@ -26,6 +26,7 @@ public class SpiderApp {
     }
 
     protected Config config(Config config) {
+        config.breakpoint = true;
         return config;
     }
 
@@ -114,7 +115,7 @@ public class SpiderApp {
         Config config = new Config();
 
         config.dbConfig = new DBConfig();
-        config.dbConfig.dbType = Constant.DB_MEMORY;
+        config.dbConfig.dbType = Constant.DB_ROCK;
         config.dbConfig.appName = name;
         config.dbConfig.redis = new RedisConfig();
         config.dbConfig.redis.ip = "127.0.0.1";

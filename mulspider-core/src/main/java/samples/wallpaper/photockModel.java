@@ -10,6 +10,7 @@ public class photockModel implements Serializable {
 
     public String imgWrapUrl;
     public String imgUrl;
+    @SField(xpath = "//*[@id=\"photo\"]/h2/a/img/@alt")
     public List<String> tags;
     public String imgW;
     public String imgH;

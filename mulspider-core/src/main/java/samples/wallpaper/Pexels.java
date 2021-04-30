@@ -40,7 +40,7 @@ public class Pexels extends WPTemp {
         return config;
     }
 
-    @ExtractMethod(methods = {NAME + EXTRACT_ITEM})
+    @ExtractMethod(methods = {Pexels.NAME + EXTRACT_ITEM})
     private Result extractItem(Response response) {
         List<String> urls = response.eval("//a[@class='js-photo-link photo-item__link']/@href");
 
@@ -68,7 +68,7 @@ public class Pexels extends WPTemp {
         return Result.makeIgnore();
     }
 
-    @ExtractMethod(methods = {NAME + EXTRACT_INFO})
+    @ExtractMethod(methods = {Pexels.NAME + EXTRACT_INFO})
     private Result extractInfo(Response response) {
         Result result = Result.make(response.request);
         PexelsModel model = ExtractUtils.extract(response, PexelsModel.class);

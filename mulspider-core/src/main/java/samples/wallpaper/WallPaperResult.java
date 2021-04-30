@@ -18,7 +18,7 @@ public class WallPaperResult {
     private final static Logger logger = LoggerFactory.getLogger(WallPaperResult.class);
     public static final String WallPaperResult = "wallpaper.result";
     public static final String WallPaperFile = "wallpaper.file";
-    public static final String DOWN_PATH = "./file/download/";
+    public static final String DOWN_PATH = "F:\\img_down/";
     AtomicInteger count = new AtomicInteger(0);
 
     @WorkInit

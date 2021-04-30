@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+        Context.instance().prepare(new String[]{"wallpaper"});
         Context.instance().init();
         Context.instance().start();
 

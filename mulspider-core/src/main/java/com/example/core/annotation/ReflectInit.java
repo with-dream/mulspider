@@ -79,7 +79,7 @@ public class ReflectInit {
         return list;
     }
 
-    private void initAnnMeta(Map<String, AnnMeta.AppMeta> appMap, Map<String, AnnMeta.WorkMeta> workMap) {
+    public void initAnnMeta(Map<String, AnnMeta.AppMeta> appMap, Map<String, AnnMeta.WorkMeta> workMap) {
         try {
             Reflections.log = null;
             Reflections ref = new Reflections();
