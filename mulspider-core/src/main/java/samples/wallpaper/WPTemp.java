@@ -143,6 +143,7 @@ public class WPTemp extends SpiderApp {
     }
 
     protected String getUrl() {
+        logger.warn("\n\ngetUrl==>\n\n" + index.get());
         return String.format(baseUrl, index.getAndIncrement());
     }
 
